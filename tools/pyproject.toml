@@ -1,0 +1,6 @@
+[project]
+name = "lunar-prep"
+version = "0.1.0"
+description = "One-time data preparation for the Lunar Landing Site Navigator"
+requires-python = ">=3.12,<3.13"
+dependencies = ["spiceypy>=6", "numpy>=2", "rasterio>=1.4", "pillow>=11", "requests>=2.32"]

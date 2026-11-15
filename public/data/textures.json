@@ -1,0 +1,50 @@
+{
+  "moon_color": "NASA SVS CGI Moon Kit, lroc_color_poles_4k.tif",
+  "moon_normal": "Derived from NASA SVS CGI Moon Kit ldem_16.tif, relief x2.0",
+  "pole_normal": "Derived from LDEM_80S_80MPP_ADJ.TIF, true relief",
+  "pole_half_extent_m": 245760.0,
+  "terrain_tiles": [
+    {
+      "id": "connecting-ridge",
+      "file": "terrain_connecting-ridge.bin",
+      "size": 512,
+      "cell_m": 80.0,
+      "x_left_m": -32080.0,
+      "y_top_m": 8080.0,
+      "site_col": 256,
+      "site_row": 256,
+      "min_m": -2843.634765625,
+      "max_m": 1958.05419921875,
+      "far_file": "terrain_far_connecting-ridge.bin",
+      "far_cell_m": 640.0
+    },
+    {
+      "id": "malapert-massif",
+      "file": "terrain_malapert-massif.bin",
+      "size": 512,
+      "cell_m": 80.0,
+      "x_left_m": -20080.0,
+      "y_top_m": 142160.0,
+      "site_col": 256,
+      "site_row": 256,
+      "min_m": -1726.0482177734375,
+      "max_m": 5172.486328125,
+      "far_file": "terrain_far_malapert-massif.bin",
+      "far_cell_m": 640.0
+    },
+    {
+      "id": "nobile-rim-1",
+      "file": "terrain_nobile-rim-1.bin",
+      "size": 512,
+      "cell_m": 80.0,
+      "x_left_m": 63200.0,
+      "y_top_m": 129600.0,
+      "site_col": 256,
+      "site_row": 256,
+      "min_m": -406.3744201660156,
+      "max_m": 7026.3310546875,
+      "far_file": "terrain_far_nobile-rim-1.bin",
+      "far_cell_m": 640.0
+    }
+  ]
+}

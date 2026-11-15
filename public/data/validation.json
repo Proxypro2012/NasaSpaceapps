@@ -1,0 +1,353 @@
+{
+  "generated_utc": "2026-11-14T18:59Z",
+  "horizons": {
+    "tolerance_deg": 0.1,
+    "worst_abs_diff_deg": 0.0,
+    "pass": true,
+    "rows": [
+      {
+        "site": "connecting-ridge",
+        "utc": "2026-11-14 12:00",
+        "body": "Sun",
+        "ours_az": 257.6093,
+        "ours_el": 1.4365,
+        "horizons_az": 257.60929,
+        "horizons_el": 1.436508,
+        "diff_az": 0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "connecting-ridge",
+        "utc": "2026-11-14 12:00",
+        "body": "Earth",
+        "ours_az": 135.1488,
+        "ours_el": -4.5187,
+        "horizons_az": 135.14877,
+        "horizons_el": -4.518679,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "connecting-ridge",
+        "utc": "2027-06-21 00:00",
+        "body": "Sun",
+        "ours_az": 116.056,
+        "ours_el": -1.3461,
+        "horizons_az": 116.055983,
+        "horizons_el": -1.346119,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "connecting-ridge",
+        "utc": "2027-06-21 00:00",
+        "body": "Earth",
+        "ours_az": 137.7237,
+        "ours_el": -3.1135,
+        "horizons_az": 137.723691,
+        "horizons_el": -3.113476,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "connecting-ridge",
+        "utc": "2029-02-03 18:00",
+        "body": "Sun",
+        "ours_az": 78.3835,
+        "ours_el": -0.7239,
+        "horizons_az": 78.383504,
+        "horizons_el": -0.723926,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "connecting-ridge",
+        "utc": "2029-02-03 18:00",
+        "body": "Earth",
+        "ours_az": 139.7032,
+        "ours_el": -7.3993,
+        "horizons_az": 139.703203,
+        "horizons_el": -7.399302,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2026-11-14 12:00",
+        "body": "Sun",
+        "ours_az": 120.3493,
+        "ours_el": -0.4691,
+        "horizons_az": 120.349339,
+        "horizons_el": -0.469061,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2026-11-14 12:00",
+        "body": "Earth",
+        "ours_az": 357.8746,
+        "ours_el": -0.1157,
+        "horizons_az": 357.874622,
+        "horizons_el": -0.115675,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2027-06-21 00:00",
+        "body": "Sun",
+        "ours_az": 338.74,
+        "ours_el": 2.6373,
+        "horizons_az": 338.740046,
+        "horizons_el": 2.637297,
+        "diff_az": 0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2027-06-21 00:00",
+        "body": "Earth",
+        "ours_az": 0.4338,
+        "ours_el": 1.31,
+        "horizons_az": 0.433807,
+        "horizons_el": 1.309943,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2029-02-03 18:00",
+        "body": "Sun",
+        "ours_az": 301.0719,
+        "ours_el": 1.2338,
+        "horizons_az": 301.07187,
+        "horizons_el": 1.23384,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "malapert-massif",
+        "utc": "2029-02-03 18:00",
+        "body": "Earth",
+        "ours_az": 2.426,
+        "ours_el": -2.9682,
+        "horizons_az": 2.425968,
+        "horizons_el": -2.968175,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2026-11-14 12:00",
+        "body": "Sun",
+        "ours_az": 83.1609,
+        "ours_el": 2.1022,
+        "horizons_az": 83.160925,
+        "horizons_el": 2.10224,
+        "diff_az": 0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2026-11-14 12:00",
+        "body": "Earth",
+        "ours_az": 320.6771,
+        "ours_el": -0.6188,
+        "horizons_az": 320.677115,
+        "horizons_el": -0.618744,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2027-06-21 00:00",
+        "body": "Sun",
+        "ours_az": 301.4546,
+        "ours_el": 1.266,
+        "horizons_az": 301.454572,
+        "horizons_el": 1.266029,
+        "diff_az": -0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2027-06-21 00:00",
+        "body": "Earth",
+        "ours_az": 323.1651,
+        "ours_el": 0.9275,
+        "horizons_az": 323.165059,
+        "horizons_el": 0.927448,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2029-02-03 18:00",
+        "body": "Sun",
+        "ours_az": 263.8694,
+        "ours_el": -1.3243,
+        "horizons_az": 263.869441,
+        "horizons_el": -1.324269,
+        "diff_az": 0.0,
+        "diff_el": -0.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "utc": "2029-02-03 18:00",
+        "body": "Earth",
+        "ours_az": 325.3595,
+        "ours_el": -3.2499,
+        "horizons_az": 325.359481,
+        "horizons_el": -3.249956,
+        "diff_az": -0.0,
+        "diff_el": 0.0
+      }
+    ]
+  },
+  "sun_elevation": {
+    "expected_max_deg": 7.0,
+    "pass": true,
+    "sites": [
+      {
+        "site": "connecting-ridge",
+        "min_deg": -2.14,
+        "max_deg": 2.08
+      },
+      {
+        "site": "malapert-massif",
+        "min_deg": -5.55,
+        "max_deg": 5.6
+      },
+      {
+        "site": "nobile-rim-1",
+        "min_deg": -6.09,
+        "max_deg": 6.1
+      }
+    ]
+  },
+  "day_length": {
+    "expected_days": 29.53,
+    "pass": true,
+    "sites": [
+      {
+        "site": "connecting-ridge",
+        "period_days": 29.53
+      },
+      {
+        "site": "malapert-massif",
+        "period_days": 29.52
+      },
+      {
+        "site": "nobile-rim-1",
+        "period_days": 29.52
+      }
+    ]
+  },
+  "yearly": {
+    "year": 2027,
+    "benchmark": {
+      "solar_pct": 92,
+      "earth_pct": 50,
+      "source": "Bryant, S., Lunar Pole Illumination and Communications Statistics Computed from GSSR Elevation Data, JPL (NASA NTRS 20150008843)"
+    },
+    "sites": [
+      {
+        "site": "connecting-ridge",
+        "sunlight_pct": 87.6,
+        "earth_link_pct": 51.0,
+        "longest_dark_hours": 196.5
+      },
+      {
+        "site": "malapert-massif",
+        "sunlight_pct": 55.7,
+        "earth_link_pct": 100.0,
+        "longest_dark_hours": 364.0
+      },
+      {
+        "site": "nobile-rim-1",
+        "sunlight_pct": 44.0,
+        "earth_link_pct": 47.3,
+        "longest_dark_hours": 308.5
+      }
+    ],
+    "note": "The study's figures are multi-year averages for its own best site, from radar terrain. Ours are one calendar year at different points from laser terrain, so they are a neighbourhood check, not a match."
+  },
+  "resolution": {
+    "available": true,
+    "note": "Each horizon was rebuilt from the 40 m map at the same map point and the default window was recomputed.",
+    "sites": [
+      {
+        "site": "connecting-ridge",
+        "window_start_utc": "2026-11-14T00:00:00Z",
+        "days": 30,
+        "coarse": {
+          "sunlight_pct": 100.0,
+          "earth_link_pct": 46.7,
+          "verdict": "Good"
+        },
+        "fine": {
+          "sunlight_pct": 100.0,
+          "earth_link_pct": 46.7,
+          "verdict": "Good"
+        },
+        "verdict_flips": false
+      },
+      {
+        "site": "malapert-massif",
+        "window_start_utc": "2026-11-14T00:00:00Z",
+        "days": 30,
+        "coarse": {
+          "sunlight_pct": 76.9,
+          "earth_link_pct": 100.0,
+          "verdict": "Risky"
+        },
+        "fine": {
+          "sunlight_pct": 64.2,
+          "earth_link_pct": 100.0,
+          "verdict": "Risky"
+        },
+        "verdict_flips": false
+      },
+      {
+        "site": "nobile-rim-1",
+        "window_start_utc": "2026-11-14T00:00:00Z",
+        "days": 30,
+        "coarse": {
+          "sunlight_pct": 62.5,
+          "earth_link_pct": 41.0,
+          "verdict": "Poor"
+        },
+        "fine": {
+          "sunlight_pct": 60.7,
+          "earth_link_pct": 41.0,
+          "verdict": "Poor"
+        },
+        "verdict_flips": false
+      }
+    ]
+  },
+  "disc_vs_point": {
+    "note": "Sunlight share over 2027 with the Sun as a disc (used in the app) and as a single point; the flip column is for the default window.",
+    "sites": [
+      {
+        "site": "connecting-ridge",
+        "disc_sunlight_pct": 87.6,
+        "point_sunlight_pct": 87.5,
+        "verdict_flips": false
+      },
+      {
+        "site": "malapert-massif",
+        "disc_sunlight_pct": 55.7,
+        "point_sunlight_pct": 55.7,
+        "verdict_flips": false
+      },
+      {
+        "site": "nobile-rim-1",
+        "disc_sunlight_pct": 44.0,
+        "point_sunlight_pct": 44.0,
+        "verdict_flips": false
+      }
+    ]
+  }
+}

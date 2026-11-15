@@ -1,0 +1,50 @@
+{
+  "terrain_file": "LDEM_80S_80MPP_ADJ.TIF",
+  "terrain_resolution_m": 80.0,
+  "mast_height_m": 2.0,
+  "mask_step_deg": 0.5,
+  "mask_bins": 720,
+  "reference_radius_km": 1737.4,
+  "frame": "MOON_ME",
+  "sites": [
+    {
+      "id": "connecting-ridge",
+      "name": "Connecting Ridge",
+      "blurb": "The ridge between Shackleton and de Gerlache craters",
+      "lat_deg": -89.43998,
+      "lon_deg": 222.9001,
+      "height_m": 1958.1,
+      "x_m": -11560.0,
+      "y_m": -12440.0,
+      "horizon_file": "horizon_connecting-ridge.bin",
+      "artemis_list": "Artemis III candidate region (2022 list)",
+      "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site01 (Barker et al. 2021)"
+    },
+    {
+      "id": "malapert-massif",
+      "name": "Malapert Massif",
+      "blurb": "A mountain on the Earth-facing side of the pole",
+      "lat_deg": -85.99018,
+      "lon_deg": 0.20725,
+      "height_m": 4854.6,
+      "x_m": 440.0,
+      "y_m": 121640.0,
+      "horizon_file": "horizon_malapert-massif.bin",
+      "artemis_list": "Artemis III candidate region (2022 and 2024 lists)",
+      "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site23 (Barker et al. 2021)"
+    },
+    {
+      "id": "nobile-rim-1",
+      "name": "Nobile Rim 1",
+      "blurb": "High ground on the rim of Nobile crater",
+      "lat_deg": -85.46776,
+      "lon_deg": 37.5066,
+      "height_m": 6045.5,
+      "x_m": 83720.0,
+      "y_m": 109080.0,
+      "horizon_file": "horizon_nobile-rim-1.bin",
+      "artemis_list": "Artemis III candidate region (2022 and 2024 lists)",
+      "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site06 (Barker et al. 2021)"
+    }
+  ]
+}

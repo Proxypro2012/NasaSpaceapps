@@ -1,0 +1,33 @@
+{
+  "note": "Region centres are the centres of NASA PGDA's 5 m/pix LOLA site elevation maps (product 78, Barker et al. 2021). build_horizons.py snaps each to the highest 80 m terrain cell within snap_radius_m, and writes the resolved point to public/data/sites.json.",
+  "snap_radius_m": 1000,
+  "sites": [
+    {
+      "id": "connecting-ridge",
+      "name": "Connecting Ridge",
+      "blurb": "The ridge between Shackleton and de Gerlache craters",
+      "region_x_m": -11000,
+      "region_y_m": -12000,
+      "pgda_site": "Site01",
+      "artemis_list": "Artemis III candidate region (2022 list)"
+    },
+    {
+      "id": "malapert-massif",
+      "name": "Malapert Massif",
+      "blurb": "A mountain on the Earth-facing side of the pole",
+      "region_x_m": -500,
+      "region_y_m": 121500,
+      "pgda_site": "Site23",
+      "artemis_list": "Artemis III candidate region (2022 and 2024 lists)"
+    },
+    {
+      "id": "nobile-rim-1",
+      "name": "Nobile Rim 1",
+      "blurb": "High ground on the rim of Nobile crater",
+      "region_x_m": 84000,
+      "region_y_m": 110000,
+      "pgda_site": "Site06",
+      "artemis_list": "Artemis III candidate region (2022 and 2024 lists)"
+    }
+  ]
+}

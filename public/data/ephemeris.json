@@ -1,0 +1,29 @@
+{
+  "start_utc": "2026-01-01T00:00:00Z",
+  "end_utc": "2031-01-01T00:00:00Z",
+  "step_seconds": 3600.0,
+  "samples": 43825,
+  "values_per_sample": 6,
+  "layout": [
+    "sun_x_km",
+    "sun_y_km",
+    "sun_z_km",
+    "earth_x_km",
+    "earth_y_km",
+    "earth_z_km"
+  ],
+  "frame": "MOON_ME (mean Earth / polar axis, DE421 alignment)",
+  "observer": "Moon centre",
+  "aberration": "LT+S",
+  "kernels": [
+    "de440s.bsp",
+    "moon_pa_de440_200625.bpc",
+    "moon_de440_250416.tf",
+    "naif0012.tls"
+  ],
+  "interpolation": "Catmull-Rom cubic on hourly samples",
+  "max_interpolation_error_deg": {
+    "sun_deg": 2.831646840510158e-06,
+    "earth_deg": 1.7075472925031877e-06
+  }
+}
