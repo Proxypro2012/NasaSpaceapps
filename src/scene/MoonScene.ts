@@ -217,15 +217,22 @@ export class MoonScene {
     for (const pin of this.pins) pin.root.setAttribute('aria-pressed', String(pin.site.id === id));
   }
 
-  /** Glide the camera to look straight down on a site, or back to the opening view. */
+  /**
+   * Glide the camera down over the pole so the sites pull apart, or back to the opening view.
+   * The sites sit within a few degrees of each other, so the camera frames all of them rather
+   * than the chosen one alone; looking straight down on one would push the others off screen.
+   */
   focusSite(id: string | null): void {
     const target = new THREE.PerspectiveCamera();
     let toD = this.homeDistance;
     if (id) {
-      const pin = this.pins.find((p) => p.site.id === id);
-      if (!pin) return;
-      target.position.copy(pin.dir).multiplyScalar(2);
-      toD = 1.3;
+      if (!this.pins.some((p) => p.site.id === id)) return;
+      const middle = new THREE.Vector3();
+      for (const p of this.pins) middle.add(p.dir);
+      middle.normalize();
+      const spread = Math.max(...this.pins.map((p) => p.dir.angleTo(middle)));
+      target.position.copy(middle).multiplyScalar(2);
+      toD = this.distanceToFit(spread);
       this.userMoved = true;
     } else {
       target.position.set(0.42, 0, -0.91).normalize();
@@ -246,6 +253,20 @@ export class MoonScene {
       t0: performance.now(),
       ms: 1500,
     };
+  }
+
+  /**
+   * Camera distance at which a point `angle` radians from the view centre lands well inside
+   * the free area around the frame centre, leaving room for the top bar and a pin label.
+   */
+  private distanceToFit(angle: number): number {
+    const { w, h } = this.size;
+    const { x: cx, y: cy } = this.centre;
+    const room = Math.min(cy - 84, h - this.labelBottomInset - cy, cx, w - cx);
+    const px = Math.max(40, room * 0.55);
+    const tanHalf = Math.tan((FOV_DEG * Math.PI) / 360);
+    const d = Math.cos(angle) + (Math.sin(angle) * (h / 2)) / (tanHalf * px);
+    return Math.min(this.homeDistance, Math.max(MIN_DISTANCE, d));
   }
 
   dispose(): void {

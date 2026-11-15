@@ -127,7 +127,8 @@ export const useStore = create<State>((set, get) => ({
   },
   setSite: (siteId) => set({ siteId }),
   setAudience: (audience) => set({ audience, playing: false }),
-  setPanel: (panel) => set({ panel }),
+  // Opening a panel clears an earlier notice, which would otherwise sit on top of the panel.
+  setPanel: (panel) => set(panel === 'none' ? { panel } : { panel, notice: null }),
   setPlaying: (playing) => set({ playing }),
   setNotice: (notice) => set({ notice }),
 }));
