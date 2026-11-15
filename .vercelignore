@@ -1,0 +1,7 @@
+data/raw
+tools/.venv
+node_modules
+.git
+.playwright-mcp
+docs
+**/__pycache__

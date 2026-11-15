@@ -25,6 +25,8 @@ export interface SiteRecord {
   x_m: number;
   y_m: number;
   horizon_file: string;
+  comparison_horizon_file: string;
+  comparison_height_m: number;
   artemis_list: string;
   source: string;
 }
@@ -32,6 +34,8 @@ export interface SiteRecord {
 export interface SitesFile {
   terrain_file: string;
   terrain_resolution_m: number;
+  comparison_terrain_file: string;
+  comparison_resolution_m: number;
   mast_height_m: number;
   mask_step_deg: number;
   mask_bins: number;
@@ -50,6 +54,7 @@ export interface Site extends SiteRecord {
   /** Terrain horizon elevation per azimuth bin, degrees. */
   mask: Float32Array;
   maskStepDeg: number;
+  comparison?: Site;
 }
 
 export interface BodySky {
@@ -61,6 +66,8 @@ export interface BodySky {
   radius: number;
   /** Fraction of the disc above the terrain horizon, 0 to 1. */
   frac: number;
+  /** Fraction above terrain alone, before eclipse obstruction. */
+  terrainFrac: number;
 }
 
 export interface SkyState {
@@ -76,6 +83,14 @@ export interface WindowMetrics {
   earthLinkPct: number;
   combinedPct: number;
   verdict: Verdict;
+  resolution?: {
+    sunlightPct: number;
+    longestDarkHours: number;
+    earthLinkPct: number;
+    combinedPct: number;
+    verdict: Verdict;
+    sensitive: boolean;
+  };
 }
 
 export interface DayCell {

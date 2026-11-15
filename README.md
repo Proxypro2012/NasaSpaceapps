@@ -4,6 +4,10 @@ Pick a date and see, site by site, whether a lander at the Moon's south pole get
 
 Everything runs in the browser. There is no server and no API key.
 
+**Live app:** https://southlight-tau.vercel.app/
+
+**Project guide, screenshots and captioned walkthrough:** https://southlight-tau.vercel.app/?guide=1
+
 ## Run it
 
 ```bash
@@ -31,6 +35,14 @@ The prepared data is already in `public/data` and `public/textures`, so the step
 
 The verdict thresholds (Good, Risky, Poor) are this project's own definitions, not NASA standards. They are listed in the app under "How we know", together with every assumption, the validation results, and the limits.
 
+Calculations use the 40 m LOLA terrain map, with an 80 m comparison at the same
+points. The selected window is flagged when the two resolutions disagree on
+the sunlight verdict. Solar visibility includes geometric lunar eclipses and
+terrain obstruction. Good/Risky/Poor describe sunlight conditions; Earth
+visibility is reported separately and does not establish a working radio link
+or landing safety. All metrics use 30-minute samples, so percentages and dark
+durations are estimates rather than exact event times.
+
 ## Rebuilding the data
 
 Needs [uv](https://docs.astral.sh/uv/) and about 1 GB of disk. Download these into `data/raw/`:
@@ -39,7 +51,7 @@ Needs [uv](https://docs.astral.sh/uv/) and about 1 GB of disk. Download these in
 | --- | --- |
 | `de440s.bsp`, `moon_pa_de440_200625.bpc`, `moon_de440_250416.tf`, `naif0012.tls`, `pck00011.tpc` | https://naif.jpl.nasa.gov/pub/naif/generic_kernels/ (`spk/planets`, `pck`, `fk/satellites`, `lsk`) |
 | `LDEM_80S_80MPP_ADJ.TIF` | https://pgda.gsfc.nasa.gov/data/LOLA_20mpp/ |
-| `LDEM_80S_40MPP_ADJ.TIF` (optional, for the resolution check) | same folder |
+| `LDEM_80S_40MPP_ADJ.TIF` (primary calculations) | same folder |
 
 The Moon Kit maps are downloaded by the texture script itself. Then:
 
@@ -69,4 +81,20 @@ Sites are defined in `tools/sites.json`.
 
 **Design**: Instrument Serif typeface (SIL Open Font License, `public/fonts/OFL.txt`). The sky shader, palette and visual style are adapted from Voca, the team's own earlier app; that is pre-existing work.
 
-**AI tools**: Claude (Anthropic) was used to help write the code.
+**AI tools**: Claude (Anthropic) and Codex (OpenAI) assisted with writing, debugging,
+testing and reviewing the code. Screenshots and the walkthrough record the running app.
+
+## Mission and virtual project guide
+
+Choose **Try a mission** for a reproducible seven-day Connecting Ridge example.
+The better-window search keeps original and destination results side by side;
+the shared visibility timeline explains terrain obstruction and eclipses at the
+same moment used by the skyline and scene. Both terrain maps are searched to
+flag recommendations whose preferred dates depend on map detail.
+
+Open `/?guide=1` for the project introduction, screenshots and captioned recording.
+Source materials are in `public/submission/`; current submission-requirement
+findings are in `docs/submission-requirements.md`.
+
+Deploy with the authenticated Vercel CLI using `vercel --prod`. The project
+configuration builds `dist/`; `.vercelignore` excludes raw data and environments.

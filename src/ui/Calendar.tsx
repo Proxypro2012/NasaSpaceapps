@@ -3,7 +3,7 @@ import type { AppData } from '../engine/load';
 import { DAY_MS, startOfUtcDay } from '../engine/metrics';
 import type { DayCell, Site } from '../engine/types';
 import { useStore } from '../state/store';
-import { jumpToBest } from './actions';
+import { BestWindowButton } from './Mission';
 import { fmtDate, fmtDayMonth, pct } from './format';
 import { useCalendar, useEscape } from './hooks';
 
@@ -133,9 +133,7 @@ export function CalendarSheet({ data }: { data: AppData }) {
               close();
             }}
           />
-          <button type="button" className="pill" onClick={() => jumpToBest(data)}>
-            Jump to best window
-          </button>
+          <BestWindowButton data={data} />
         </div>
       </section>
     </div>

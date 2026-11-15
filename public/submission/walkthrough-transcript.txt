@@ -1,0 +1,27 @@
+Southlight — a real browser walkthrough
+
+Find seven days with sunlight and Earth in view. Southlight connects NASA
+geometry and lunar terrain.
+
+Connecting Ridge, 1 January 2027: sunlight 100%, but Earth is hidden for the
+entire seven-day window.
+
+Select an unavailable period. The shared cursor reveals the terrain obstruction
+in the skyline.
+
+Find a better window. The scene accelerates through real dates, then slows at
+the recommendation.
+
+Start nine days later: both are visible for 100% of the sampled window. The
+original stays beside it.
+
+Inspect NASA sources, direction validation and terrain sensitivity. Visibility
+is not landing safety.
+
+Southlight. A clearer view of the next landing.
+
+All percentages are geometric model estimates at 30-minute intervals using a
+half-disc visibility threshold. They do not establish a working radio link,
+solar-array energy yield, or landing safety. This is a screen recording of the
+running app, with no synthesized audio. AI tools assisted development of the
+app and preparation of this text; see the project's full credits and sources.

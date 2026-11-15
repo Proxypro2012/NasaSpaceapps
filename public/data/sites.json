@@ -1,6 +1,8 @@
 {
-  "terrain_file": "LDEM_80S_80MPP_ADJ.TIF",
-  "terrain_resolution_m": 80.0,
+  "terrain_file": "LDEM_80S_40MPP_ADJ.TIF",
+  "terrain_resolution_m": 40.0,
+  "comparison_terrain_file": "LDEM_80S_80MPP_ADJ.TIF",
+  "comparison_resolution_m": 80.0,
   "mast_height_m": 2.0,
   "mask_step_deg": 0.5,
   "mask_bins": 720,
@@ -17,6 +19,8 @@
       "x_m": -11560.0,
       "y_m": -12440.0,
       "horizon_file": "horizon_connecting-ridge.bin",
+      "comparison_horizon_file": "horizon_80m_connecting-ridge.bin",
+      "comparison_height_m": 1958.1,
       "artemis_list": "Artemis III candidate region (2022 list)",
       "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site01 (Barker et al. 2021)"
     },
@@ -30,6 +34,8 @@
       "x_m": 440.0,
       "y_m": 121640.0,
       "horizon_file": "horizon_malapert-massif.bin",
+      "comparison_horizon_file": "horizon_80m_malapert-massif.bin",
+      "comparison_height_m": 4854.6,
       "artemis_list": "Artemis III candidate region (2022 and 2024 lists)",
       "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site23 (Barker et al. 2021)"
     },
@@ -43,6 +49,8 @@
       "x_m": 83720.0,
       "y_m": 109080.0,
       "horizon_file": "horizon_nobile-rim-1.bin",
+      "comparison_horizon_file": "horizon_80m_nobile-rim-1.bin",
+      "comparison_height_m": 6045.5,
       "artemis_list": "Artemis III candidate region (2022 and 2024 lists)",
       "source": "Highest 80 m terrain cell within 1000 m of the centre of NASA PGDA LOLA 5 m/pix site map Site06 (Barker et al. 2021)"
     }

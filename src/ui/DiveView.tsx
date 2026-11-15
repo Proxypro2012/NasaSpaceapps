@@ -2,12 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AppData } from '../engine/load';
 import { loadTerrain } from '../engine/load';
 import { DAY_MS, STEP_MS } from '../engine/metrics';
-import { skyAt } from '../engine/sky';
+import { eclipseTransmission, skyAt } from '../engine/sky';
 import type { Site, WindowMetrics } from '../engine/types';
 import { TERRAIN_STRETCH, TerrainView } from '../scene/TerrainView';
 import { useStore } from '../state/store';
 import { HorizonChart } from './HorizonChart';
-import { VerdictBadge } from './VerdictCard';
+import { ResolutionNote, VerdictBadge } from './VerdictCard';
 import { fmtDate, fmtTime, pct } from './format';
 import { useEscape } from './hooks';
 
@@ -59,6 +59,7 @@ export function DiveView({ data, metrics }: Props) {
       Math.sin(az) * east[1] + Math.cos(az) * north[1],
       sky.sun.el,
       sky.sun.radius,
+      eclipseTransmission(sky.sun, sky.earth),
     );
   };
   useEffect(pushSun);
@@ -93,6 +94,7 @@ export function DiveView({ data, metrics }: Props) {
       </div>
 
       <div className="dive-panel">
+        <ResolutionNote metrics={metrics[siteId]} />
         <HorizonChart eph={data.eph} site={site} ms={displayMs} windowStartMs={windowStartMs} windowDays={windowDays} size="large" />
         <div className="scrub">
           <button type="button" className="round" aria-label="Previous day" onClick={() => stepDays(-1)}>

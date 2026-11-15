@@ -31,7 +31,7 @@ function references(data: AppData): string {
     '- Instrument Serif typeface, SIL Open Font License',
     "- Sky shader, palette and visual style adapted from Voca, the team's own earlier app",
     'AI tools',
-    '- Claude (Anthropic) was used to help write the code',
+    '- Claude (Anthropic) and Codex (OpenAI) assisted with writing, debugging and reviewing the code',
   ].join('\n');
 }
 
@@ -102,10 +102,10 @@ export function TrustPanel({ data }: { data: AppData }) {
                 {data.sitesFile.mask_step_deg}° of compass direction, the highest angle at which terrain blocks the sky, out to the edge of
                 the map, seen from {data.sitesFile.mast_height_m} m above the ground.
               </li>
-              <li>The Sun and Earth are treated as discs. The share of each disc above the skyline is measured, so rises and sets are gradual.</li>
+              <li>The Sun and Earth are treated as discs. Visibility includes the terrain skyline and Earth's obstruction of the Sun during lunar eclipses. Overlapping obstructions are counted once.</li>
               <li>
                 The window is stepped every {STEP_MINUTES} minutes. Sunlight and Earth-in-view count the steps where at least{' '}
-                {VISIBLE_THRESHOLD * 100}% of the disc is clear. The dark stretch is the longest run with the Sun fully hidden.
+                {VISIBLE_THRESHOLD * 100}% of the disc is clear. The dark stretch is the longest run without direct sunlight, including total eclipses.
               </li>
             </ol>
             <p>All of this runs in your browser. Nothing is sent to a server.</p>
@@ -134,8 +134,8 @@ export function TrustPanel({ data }: { data: AppData }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {v.horizons.rows.map((r, i) => (
-                    <tr key={i}>
+                  {v.horizons.rows.map((r) => (
+                    <tr key={`${r.site}-${r.utc}-${r.body}`}>
                       <td>{name(r.site)}</td>
                       <td>{r.utc}</td>
                       <td>{r.body}</td>
@@ -196,8 +196,8 @@ export function TrustPanel({ data }: { data: AppData }) {
             <p>{v.yearly.note} We did not adjust anything to bring these closer.</p>
 
             <h3>
-              <Check ok={v.resolution.available ? !v.resolution.sites.some((s) => s.verdict_flips) : null}>
-                Finer terrain does not change a verdict
+              <Check ok={null}>
+                Terrain resolution can change a verdict
               </Check>
             </h3>
             <p>{v.resolution.note}</p>
@@ -207,8 +207,8 @@ export function TrustPanel({ data }: { data: AppData }) {
                   <thead>
                     <tr>
                       <th>Site</th>
-                      <th>{data.sitesFile.terrain_resolution_m} m map</th>
-                      <th>40 m map</th>
+                      <th>80 m comparison</th>
+                      <th>40 m calculation</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -226,8 +226,10 @@ export function TrustPanel({ data }: { data: AppData }) {
                   </tbody>
                 </table>
                 <p>
-                  The verdicts hold, but the sunlight share can move by several points with finer terrain. Treat the percentages as
-                  estimates at this map resolution.
+                  This table is the 30-day reference window starting 14 Nov 2026. Agreement here does not prove stability on other dates.
+                  In the 2027 sweep, the number of seven-day windows whose verdict changed was{' '}
+                  {v.resolution.sites.map(s => `${name(s.site)}: ${s.yearly_verdict_flips['7']} of 365`).join('; ')}.
+                  The card flags disagreement for the selected window. Both maps are estimates; their difference is not an error bound.
                 </p>
               </>
             )}
@@ -239,7 +241,7 @@ export function TrustPanel({ data }: { data: AppData }) {
               Over {v.yearly.year}, the disc changes the yearly sunlight share by at most{' '}
               {Math.max(...v.disc_vs_point.sites.map((s) => Math.abs(s.disc_sunlight_pct - s.point_sunlight_pct))).toFixed(1)} points, and{' '}
               {v.disc_vs_point.sites.some((s) => s.verdict_flips) ? 'it changes a verdict for the default window' : 'it changes no verdict for the default window'}.
-              It matters for the shape of each sunrise and sunset, not for the totals.
+                These are measured comparisons for the stated year and reference window; other windows can differ.
             </p>
           </section>
 
@@ -257,6 +259,7 @@ export function TrustPanel({ data }: { data: AppData }) {
                 app says so instead of guessing.
               </li>
               <li>All times are UTC.</li>
+              <li>Eclipses use the geometric Sun and Earth discs. Atmospheric refraction, diffuse light and solar-array energy yield are not modeled.</li>
               <li>
                 The picture of the Moon is for orientation. Its lit side follows the real Sun direction, but the texture drives no number,
                 and Earth and the Sun are drawn much closer than they are. Only their directions are real.

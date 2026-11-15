@@ -34,6 +34,7 @@ uniform float uCell;      // metres per height sample
 uniform vec2 uSunMap;     // unit direction toward the Sun on the map (x east-ish, y up the image)
 uniform float uSunTan;    // tangent of the Sun's elevation
 uniform float uSunRadius; // angular radius of the Sun, as a tangent
+uniform float uEclipseLight;
 uniform vec2 uSite;
 varying vec2 vUv;
 varying float vH;
@@ -74,7 +75,7 @@ void main() {
 
   // Grazing light makes lit slopes read almost flat-bright, which is what the pole looks like.
   // Grazing light: level ground is dim and Sun-facing slopes are bright, as at the pole.
-  float lit = clear * (1.0 - exp(-facing * 9.0));
+  float lit = clear * uEclipseLight * (1.0 - exp(-facing * 9.0));
   vec3 ground = vec3(0.90, 0.84, 0.73);
   // A faint, fixed fill light keeps the shape of shadowed ground readable. It is not sunlight.
   float fill = 0.5 + 0.5 * dot(n, normalize(vec3(-0.35, 0.85, 0.4)));
@@ -141,6 +142,7 @@ export class TerrainView {
         uSunMap: { value: new THREE.Vector2(1, 0) },
         uSunTan: { value: 0.02 },
         uSunRadius: { value: 0.0046 },
+        uEclipseLight: { value: 1 },
         uSite: { value: new THREE.Vector2((tile.site_col + 0.5) / n, 1 - (tile.site_row + 0.5) / n) },
       },
     });
@@ -160,10 +162,11 @@ export class TerrainView {
    * Sun direction on the map (toward the Sun) and its elevation, both from the engine.
    * mapX points along +x of the polar map, mapY along +y.
    */
-  setSun(mapX: number, mapY: number, elevationDeg: number, radiusDeg: number): void {
+  setSun(mapX: number, mapY: number, elevationDeg: number, radiusDeg: number, eclipseLight = 1): void {
     this.material.uniforms.uSunMap.value.set(mapX, mapY);
     this.material.uniforms.uSunTan.value = Math.tan((elevationDeg * Math.PI) / 180);
     this.material.uniforms.uSunRadius.value = Math.tan((radiusDeg * Math.PI) / 180);
+    this.material.uniforms.uEclipseLight.value = eclipseLight;
     this.dirty = true;
   }
 

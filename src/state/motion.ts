@@ -1,5 +1,5 @@
 import { DAY_MS, startOfUtcDay } from '../engine/metrics';
-import { DATE_TWEEN_MS, dateLimits, useStore } from './store';
+import { dateLimits, useStore } from './store';
 
 /** Solves a CSS-style cubic-bezier easing curve for x in 0..1. */
 export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (x: number) => number {
@@ -24,8 +24,15 @@ export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (x:
   };
 }
 
-/** The date glide: a quick start and a long, soft settle. */
-export const dateEase = cubicBezier(0.22, 1, 0.36, 1);
+/** Starts at rest, builds speed, and brakes smoothly without overshoot. */
+export function dateEase(progress: number): number {
+  const t = Math.min(1, Math.max(0, progress));
+  return t * t * t * (10 + t * (-15 + 6 * t));
+}
+
+export function jumpDuration(distanceMs: number): number {
+  return Math.min(3600, 1800 + Math.sqrt(Math.abs(distanceMs) / DAY_MS) * 120);
+}
 
 /**
  * Drives displayMs toward targetMs. The date value itself is animated, and
@@ -38,9 +45,14 @@ export function startDateMotion(): () => void {
   let fromMs = 0;
   let toMs = 0;
   let startedAt = 0;
+  let durationMs = 0;
   let lastPlay = 0;
+  let wasMoving = false;
 
-  const frame = (now: number) => {
+  const frame = () => {
+    // A queued RAF timestamp can predate a synchronous best-window search.
+    // Use the actual callback time so that search latency cannot skip the ramp.
+    const now = performance.now();
     raf = requestAnimationFrame(frame);
     const s = useStore.getState();
     if (!s.data) return;
@@ -55,7 +67,9 @@ export function startDateMotion(): () => void {
         useStore.setState({ playing: false });
       } else {
         // The window travels with the moment, one day at a time.
-        useStore.setState({ windowStartMs: startOfUtcDay(next), targetMs: next, displayMs: next, moving: false });
+        const start = startOfUtcDay(next);
+        useStore.setState({ windowStartMs: start, targetMs: next, displayMs: next, moving: false,
+          comparison: start === s.windowStartMs ? s.comparison : null });
       }
       return;
     }
@@ -63,14 +77,17 @@ export function startDateMotion(): () => void {
 
     if (!s.moving) {
       toMs = s.targetMs;
+      wasMoving = false;
       return;
     }
-    if (s.targetMs !== toMs) {
+    if (!wasMoving || s.targetMs !== toMs || s.motionDurationMs !== durationMs) {
       fromMs = s.displayMs;
       toMs = s.targetMs;
       startedAt = now;
+      durationMs = s.motionDurationMs;
     }
-    const p = Math.min(1, (now - startedAt) / DATE_TWEEN_MS);
+    wasMoving = true;
+    const p = Math.min(1, (now - startedAt) / durationMs);
     if (p >= 1) s.setDisplay(toMs, false);
     else s.setDisplay(fromMs + (toMs - fromMs) * dateEase(p), true);
   };

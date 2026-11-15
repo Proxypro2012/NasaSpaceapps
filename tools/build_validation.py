@@ -14,13 +14,11 @@ import json
 import numpy as np
 import spiceypy as sp
 
-from build_horizons import Dem, build_mask
-from lunar.common import PUBLIC_DATA, RAW, ROOT, load_kernels, load_resolved_sites
+from lunar.common import PUBLIC_DATA, ROOT, load_kernels, load_resolved_sites
 from lunar.metrics import load_mask, series, summarise, window_ets
 
 DEFAULT_WINDOW = ("2026-11-14T00:00:00", 30)
 YEAR = 2027
-FINE_DEM = RAW / "LDEM_80S_40MPP_ADJ.TIF"
 
 
 def hourly(start: str, end: str) -> np.ndarray:
@@ -82,22 +80,15 @@ def main() -> None:
             }
         )
 
-    # Terrain resolution: rebuild each mask from the 40 m map at the same point.
-    fine = None
-    if FINE_DEM.exists():
-        try:
-            fine = Dem(FINE_DEM)
-        except Exception as err:  # an incomplete download cannot be read
-            print("40 m map unreadable, skipping the resolution check:", str(err)[:80])
-    resolution = {"available": fine is not None, "note": "", "sites": []}
-    if fine is not None:
+    # Compare both prepared resolutions at exactly the same map points.
+    resolution = {"available": True, "note": "", "sites": []}
+    if resolution['available']:
         w = window_ets(*DEFAULT_WINDOW)
         for s in sites:
-            h = float(fine.sample(np.array([s["x_m"]]), np.array([s["y_m"]]))[0])
-            fine_mask = build_mask(fine, s["x_m"], s["y_m"], h, s["lat_deg"], s["lon_deg"])
-            fine_site = {**s, "height_m": h}
-            a = series(s, masks[s["id"]], w)
-            b = series(fine_site, fine_mask, w)
+            coarse_site = {**s, 'height_m': s['comparison_height_m']}
+            coarse_mask = load_mask(PUBLIC_DATA / s['comparison_horizon_file'])
+            a = series(coarse_site, coarse_mask, w)
+            b = series(s, masks[s['id']], w)
             ma = summarise(a["sun"]["frac"], a["earth"]["frac"])
             mb = summarise(b["sun"]["frac"], b["earth"]["frac"])
             pick = lambda m: {  # noqa: E731
@@ -105,6 +96,19 @@ def main() -> None:
                 "earth_link_pct": round(m["earth_link_pct"], 1),
                 "verdict": m["verdict"],
             }
+            # A whole year of daily starts and all supported window lengths.
+            span = window_ets(f'{YEAR}-01-01T00:00:00', 395)
+            aa = series(coarse_site, coarse_mask, span)
+            bb = series(s, masks[s['id']], span)
+            flips = {}
+            for days in (7, 14, 30):
+                count = 0
+                for day in range(365):
+                    sl = slice(day * 48, (day + days) * 48)
+                    am = summarise(aa['sun']['frac'][sl], aa['earth']['frac'][sl])
+                    bm = summarise(bb['sun']['frac'][sl], bb['earth']['frac'][sl])
+                    count += am['verdict'] != bm['verdict']
+                flips[str(days)] = count
             resolution["sites"].append(
                 {
                     "site": s["id"],
@@ -113,10 +117,13 @@ def main() -> None:
                     "coarse": pick(ma),
                     "fine": pick(mb),
                     "verdict_flips": ma["verdict"] != mb["verdict"],
+                    "yearly_verdict_flips": flips,
                 }
             )
         resolution["note"] = (
-            "Each horizon was rebuilt from the 40 m map at the same map point and the default window was recomputed."
+            "The app uses 40 m terrain. We compare it with 80 m terrain at the same points, "
+            "for a reference window and all 365 daily starts in 2027 at 7, 14 and 30 days. "
+            "The current window is also compared in the verdict card."
         )
     else:
         resolution["note"] = "The 40 m terrain map was not available when the data was prepared, so this check was not run."

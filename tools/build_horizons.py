@@ -1,4 +1,4 @@
-"""Build a terrain horizon mask for each site from the LOLA 80 m elevation map.
+"""Build primary 40 m and comparison 80 m LOLA horizon masks at fixed sites.
 
 For every 0.5 degrees of azimuth, the mask holds the highest elevation angle at
 which terrain blocks the sky, seen from a point MAST_HEIGHT_M above the site.
@@ -27,6 +27,7 @@ from lunar.common import (
     MASK_STEP_DEG,
     MAST_HEIGHT_M,
     PUBLIC_DATA,
+    RAW,
     ROOT,
     az_el,
     enu_basis,
@@ -145,6 +146,7 @@ def build_mask(dem: Dem, sx: float, sy: float, sh: float, lat: float, lon: float
 def main() -> None:
     spec = json.loads((ROOT / "tools" / "sites.json").read_text())
     dem = Dem()
+    fine = Dem(RAW / 'LDEM_80S_40MPP_ADJ.TIF')
     print(f"{dem.name}: {dem.cols}x{dem.rows} at {dem.res} m, units '{dem.units}', nodata {dem.nodata}")
     print(f"height range {np.nanmin(dem.height):.0f} .. {np.nanmax(dem.height):.0f} m")
     PUBLIC_DATA.mkdir(parents=True, exist_ok=True)
@@ -152,10 +154,15 @@ def main() -> None:
     for s in spec["sites"]:
         sx, sy, sh = snap_to_high_ground(dem, s["region_x_m"], s["region_y_m"], spec["snap_radius_m"])
         lat, lon = xy_to_latlon(sx, sy)
-        mask = build_mask(dem, sx, sy, sh, lat, lon)
+        coarse_mask = build_mask(dem, sx, sy, sh, lat, lon)
+        coarse_height = sh
+        sh = float(fine.sample(np.array([sx]), np.array([sy]))[0])
+        mask = build_mask(fine, sx, sy, sh, lat, lon)
         assert mask.min() > -90.0, "empty azimuth bin"
         fname = f"horizon_{s['id']}.bin"
         (PUBLIC_DATA / fname).write_bytes(mask.astype("<f4").tobytes())
+        coarse_name = f"horizon_80m_{s['id']}.bin"
+        (PUBLIC_DATA / coarse_name).write_bytes(coarse_mask.astype('<f4').tobytes())
         print(
             f"{s['name']}: lat {lat:.4f} lonE {lon:.4f} h {sh:.0f} m | horizon "
             f"min {mask.min():.2f} mean {mask.mean():.2f} max {mask.max():.2f} deg"
@@ -171,6 +178,8 @@ def main() -> None:
                 "x_m": sx,
                 "y_m": sy,
                 "horizon_file": fname,
+                "comparison_horizon_file": coarse_name,
+                "comparison_height_m": round(coarse_height, 1),
                 "artemis_list": s["artemis_list"],
                 "source": (
                     f"Highest 80 m terrain cell within {spec['snap_radius_m']} m of the centre of NASA PGDA "
@@ -179,8 +188,10 @@ def main() -> None:
             }
         )
     meta = {
-        "terrain_file": dem.name,
-        "terrain_resolution_m": dem.res,
+        "terrain_file": fine.name,
+        "terrain_resolution_m": fine.res,
+        "comparison_terrain_file": dem.name,
+        "comparison_resolution_m": dem.res,
         "mast_height_m": MAST_HEIGHT_M,
         "mask_step_deg": MASK_STEP_DEG,
         "mask_bins": MASK_BINS,

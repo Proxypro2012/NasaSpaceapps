@@ -30,6 +30,7 @@ export interface SceneOptions {
   onOpenSite(id: string): void;
   /** Called when the camera leaves, or returns to, the opening view. */
   onViewChange?(moved: boolean): void;
+  onAssetError?(message: string): void;
 }
 
 interface Pin {
@@ -88,6 +89,7 @@ export class MoonScene {
   private size = { w: 1, h: 1 };
   private displayMs = 0;
   private raf = 0;
+  private disposed = false;
   private startedAt = performance.now();
   private disposers: (() => void)[] = [];
   private sunDir: Vec3 = [1, 0, 0];
@@ -125,7 +127,7 @@ export class MoonScene {
       const t = loader.load(`${import.meta.env.BASE_URL}textures/${file}`, () => {
         pending -= 1;
         if (pending === 0) this.moon.uniforms.uReady.value = 1;
-      });
+      }, undefined, () => this.opts.onAssetError?.(`Could not load ${file}. The geometric results and skyline still work.`));
       t.colorSpace = THREE.NoColorSpace;
       t.anisotropy = 8;
       t.wrapS = THREE.RepeatWrapping;
@@ -140,6 +142,8 @@ export class MoonScene {
         uPoleNormal: { value: texture('pole_normal.jpg') },
         uSunDir: { value: new THREE.Vector3(1, 0, 0) },
         uEarthDir: { value: new THREE.Vector3(1, 0, 0) },
+        uSunKm: { value: new THREE.Vector3(150_000_000, 0, 0) },
+        uEarthKm: { value: new THREE.Vector3(384_000, 0, 0) },
         uPoleHalf: { value: opts.poleHalfExtentM },
         uReady: { value: 0 },
       },
@@ -168,7 +172,15 @@ export class MoonScene {
     const onResize = () => this.resize();
     window.addEventListener('resize', onResize);
     this.disposers.push(() => window.removeEventListener('resize', onResize));
-    this.raf = requestAnimationFrame(this.frame);
+    const observer = new ResizeObserver(onResize);
+    observer.observe(opts.canvas);
+    this.disposers.push(() => observer.disconnect());
+    // Compile in parallel where supported, before the first draw can stall.
+    void this.renderer.compileAsync(this.scene, this.camera).then(() => {
+      if (!this.disposed) this.raf = requestAnimationFrame(this.frame);
+    }).catch(() => {
+      if (!this.disposed) opts.onAssetError?.('The lunar view could not initialize. The geometric results and skyline still work.');
+    });
   }
 
   /** The date to draw. Called every frame while the date glides. */
@@ -270,6 +282,7 @@ export class MoonScene {
   }
 
   dispose(): void {
+    this.disposed = true;
     cancelAnimationFrame(this.raf);
     for (const d of this.disposers) d();
     for (const pin of this.pins) pin.root.remove();
@@ -408,9 +421,11 @@ export class MoonScene {
     this.camera.updateMatrixWorld();
 
     // Everything below comes from the engine for the displayed date.
-    bodyDirections(this.opts.eph, this.displayMs, this.sunDir, this.earthDir);
+    const distances = bodyDirections(this.opts.eph, this.displayMs, this.sunDir, this.earthDir);
     this.moon.uniforms.uSunDir.value.set(...this.sunDir);
     this.moon.uniforms.uEarthDir.value.set(...this.earthDir);
+    this.moon.uniforms.uSunKm.value.set(...this.sunDir).multiplyScalar(distances[0]);
+    this.moon.uniforms.uEarthKm.value.set(...this.earthDir).multiplyScalar(distances[1]);
     this.earthMat.uniforms.uSunDir.value.set(...this.sunDir);
     this.earth.position.set(...this.earthDir).multiplyScalar(EARTH_DISTANCE);
 

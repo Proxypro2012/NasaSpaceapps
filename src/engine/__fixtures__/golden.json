@@ -49,7 +49,7 @@
    "sun_el": -1.7602729024717987,
    "sun_range_km": 152093824.48332497,
    "sun_radius_deg": 0.26208041611017596,
-   "sun_frac": 0.06289204091382347,
+   "sun_frac": 0.0,
    "earth_az": 143.9592016061384,
    "earth_el": -4.835986726387703,
    "earth_range_km": 392616.5527328438,
@@ -77,7 +77,7 @@
    "sun_el": -0.5647635987326387,
    "sun_range_km": 151516396.1811394,
    "sun_radius_deg": 0.26307921039923676,
-   "sun_frac": 0.9754671112155796,
+   "sun_frac": 0.5829399468084867,
    "earth_az": 136.6895771471838,
    "earth_el": -6.05029894893495,
    "earth_range_km": 403963.1038128989,
@@ -96,7 +96,7 @@
    "earth_el": -2.0529190591591466,
    "earth_range_km": 395224.895386786,
    "earth_radius_deg": 0.9246790868042293,
-   "earth_frac": 0.3823611468489052
+   "earth_frac": 0.3813185887105073
   },
   {
    "site": "connecting-ridge",
@@ -152,7 +152,7 @@
    "earth_el": -2.258276882916771,
    "earth_range_km": 404554.13913760206,
    "earth_radius_deg": 0.903353684165577,
-   "earth_frac": 0.23183162812966057
+   "earth_frac": 0.2308014030838342
   },
   {
    "site": "connecting-ridge",
@@ -208,7 +208,7 @@
    "earth_el": -0.8306259428596501,
    "earth_range_km": 361769.7900428219,
    "earth_radius_deg": 1.010198406851389,
-   "earth_frac": 0.5833650151886149
+   "earth_frac": 0.5830780729726853
   },
   {
    "site": "connecting-ridge",
@@ -217,7 +217,7 @@
    "sun_el": -1.5903194355128056,
    "sun_range_km": 151907518.93927464,
    "sun_radius_deg": 0.26240184441086073,
-   "sun_frac": 0.3186961748931058,
+   "sun_frac": 0.053848125177122876,
    "earth_az": 142.63389386431405,
    "earth_el": -4.951664989843572,
    "earth_range_km": 375940.3381902476,
@@ -320,7 +320,7 @@
    "earth_el": -2.691874062202558,
    "earth_range_km": 359553.1675104154,
    "earth_radius_deg": 1.0164268675170312,
-   "earth_frac": 0.027418930640660356
+   "earth_frac": 0.02703779405408391
   },
   {
    "site": "connecting-ridge",
@@ -348,7 +348,7 @@
    "earth_el": -1.093741287519224,
    "earth_range_km": 402745.9667215397,
    "earth_radius_deg": 0.9074097284753606,
-   "earth_frac": 0.4212876331242775
+   "earth_frac": 0.42129109682867677
   },
   {
    "site": "connecting-ridge",
@@ -390,7 +390,7 @@
    "earth_el": -2.009373616721578,
    "earth_range_km": 371795.7012766642,
    "earth_radius_deg": 0.9829545009725063,
-   "earth_frac": 0.40741564783288425
+   "earth_frac": 0.4064638113829369
   },
   {
    "site": "connecting-ridge",
@@ -516,7 +516,7 @@
    "earth_el": 0.02902498753491999,
    "earth_range_km": 374839.9492718209,
    "earth_radius_deg": 0.9749707006518612,
-   "earth_frac": 0.9944118404858848
+   "earth_frac": 0.9944471535565235
   },
   {
    "site": "connecting-ridge",
@@ -544,7 +544,7 @@
    "earth_el": -0.3963128878827906,
    "earth_range_km": 373901.5269005676,
    "earth_radius_deg": 0.9774179304793891,
-   "earth_frac": 0.8604904045927193
+   "earth_frac": 0.8605169135180768
   },
   {
    "site": "connecting-ridge",
@@ -684,7 +684,7 @@
    "earth_el": -0.43896728088688686,
    "earth_range_km": 363296.297592876,
    "earth_radius_deg": 1.0059532925734884,
-   "earth_frac": 0.8240009270368308
+   "earth_frac": 0.8239619544688405
   },
   {
    "site": "connecting-ridge",
@@ -707,7 +707,7 @@
    "sun_el": -1.648875577851268,
    "sun_range_km": 147565107.31378755,
    "sun_radius_deg": 0.2701236233739552,
-   "sun_frac": 0.14321516630100206,
+   "sun_frac": 0.0,
    "earth_az": 137.54458714166964,
    "earth_el": 3.532803891548616,
    "earth_range_km": 404052.89327974565,
@@ -721,7 +721,7 @@
    "sun_el": -1.749357664036593,
    "sun_range_km": 148231664.54826966,
    "sun_radius_deg": 0.2689089424152755,
-   "sun_frac": 0.6904373851673419,
+   "sun_frac": 0.6890390865656479,
    "earth_az": 132.35103319927947,
    "earth_el": -6.943627075604905,
    "earth_range_km": 374789.07526123704,
@@ -763,7 +763,7 @@
    "sun_el": -1.7602385420172684,
    "sun_range_km": 150434529.12897673,
    "sun_radius_deg": 0.2649711879479009,
-   "sun_frac": 0.21623433420523483,
+   "sun_frac": 0.17072311562547113,
    "earth_az": 131.57205658978032,
    "earth_el": -7.146908995609074,
    "earth_range_km": 366451.9495488099,
@@ -852,7 +852,7 @@
    "earth_el": -2.8236594474392387,
    "earth_range_km": 402895.82282454404,
    "earth_radius_deg": 0.907072191470199,
-   "earth_frac": 0.7071452827336485
+   "earth_frac": 0.7068525334064693
   },
   {
    "site": "malapert-massif",
@@ -922,7 +922,7 @@
    "earth_el": -2.8864165885480713,
    "earth_range_km": 405344.92746219825,
    "earth_radius_deg": 0.9015911838274117,
-   "earth_frac": 0.8250252443440328
+   "earth_frac": 0.8247937990881732
   },
   {
    "site": "malapert-massif",
@@ -1001,7 +1001,7 @@
    "sun_el": -2.7481546330979927,
    "sun_range_km": 146729328.45570317,
    "sun_radius_deg": 0.2716622748683354,
-   "sun_frac": 0.6608588667296517,
+   "sun_frac": 0.41952915637528276,
    "earth_az": 2.1371175604728183,
    "earth_el": -1.903874455839943,
    "earth_range_km": 405999.65724438365,
@@ -1020,7 +1020,7 @@
    "earth_el": -2.3439665247404324,
    "earth_range_km": 385729.4227331024,
    "earth_radius_deg": 0.9474438934948026,
-   "earth_frac": 0.9978351368046521
+   "earth_frac": 0.9978024111986404
   },
   {
    "site": "malapert-massif",
@@ -1071,7 +1071,7 @@
    "sun_el": -2.913256494485741,
    "sun_range_km": 151526465.9975842,
    "sun_radius_deg": 0.2630617271301773,
-   "sun_frac": 1.0,
+   "sun_frac": 0.9684423301885199,
    "earth_az": 353.44360182045443,
    "earth_el": 7.970667272541135,
    "earth_range_km": 393647.051235688,
@@ -1132,7 +1132,7 @@
    "earth_el": -2.8388464596506613,
    "earth_range_km": 395335.5581951147,
    "earth_radius_deg": 0.9244202270492277,
-   "earth_frac": 0.7545203171488428
+   "earth_frac": 0.7546384128068624
   },
   {
    "site": "malapert-massif",
@@ -1155,7 +1155,7 @@
    "sun_el": -2.611420114184079,
    "sun_range_km": 147244483.47767732,
    "sun_radius_deg": 0.2707118200526048,
-   "sun_frac": 0.26619039969094865,
+   "sun_frac": 0.04556546480973869,
    "earth_az": 4.939922968565128,
    "earth_el": -2.2894389011209912,
    "earth_range_km": 386326.20289800223,
@@ -1337,12 +1337,12 @@
    "sun_el": -2.44944384791412,
    "sun_range_km": 148720637.87964907,
    "sun_radius_deg": 0.2680247997435012,
-   "sun_frac": 0.5878830016769656,
+   "sun_frac": 0.3214975672909494,
    "earth_az": 1.0231450825610133,
    "earth_el": -2.774877016660956,
    "earth_range_km": 359250.3035150017,
    "earth_radius_deg": 1.0172838506208493,
-   "earth_frac": 0.7799840093709314
+   "earth_frac": 0.778848450771835
   },
   {
    "site": "malapert-massif",
@@ -1393,7 +1393,7 @@
    "sun_el": 1.112465478247076,
    "sun_range_km": 148223670.91745538,
    "sun_radius_deg": 0.2689234446508468,
-   "sun_frac": 0.7674809359454585,
+   "sun_frac": 0.7342627813293503,
    "earth_az": 352.26771929164886,
    "earth_el": 4.783812863872187,
    "earth_range_km": 382788.6424233504,
@@ -1412,7 +1412,7 @@
    "earth_el": -2.46398111941188,
    "earth_range_km": 363296.29774896335,
    "earth_radius_deg": 1.0059532921412442,
-   "earth_frac": 0.978424341773541
+   "earth_frac": 0.9782963856765075
   },
   {
    "site": "malapert-massif",
@@ -1440,7 +1440,7 @@
    "earth_el": -2.742884897374728,
    "earth_range_km": 358283.5644169551,
    "earth_radius_deg": 1.0200290277427326,
-   "earth_frac": 0.7323093325146726
+   "earth_frac": 0.7320867564932872
   },
   {
    "site": "malapert-massif",
@@ -1519,7 +1519,7 @@
    "sun_el": -2.8160429318930844,
    "sun_range_km": 151267497.49416387,
    "sun_radius_deg": 0.26351208945409754,
-   "sun_frac": 0.442689858332885,
+   "sun_frac": 0.0,
    "earth_az": 355.9141366977762,
    "earth_el": -1.7256397896626194,
    "earth_range_km": 370097.00321260566,
@@ -1580,7 +1580,7 @@
    "earth_el": -2.9632105801690125,
    "earth_range_km": 368232.38045460946,
    "earth_radius_deg": 0.9924673279272923,
-   "earth_frac": 0.74751413165588
+   "earth_frac": 0.7469039217624384
   },
   {
    "site": "malapert-massif",
@@ -1594,7 +1594,7 @@
    "earth_el": -2.663596563301594,
    "earth_range_km": 373101.74922642263,
    "earth_radius_deg": 0.9795133190002957,
-   "earth_frac": 0.798327407457796
+   "earth_frac": 0.79762060436475
   },
   {
    "site": "malapert-massif",
@@ -1636,7 +1636,7 @@
    "earth_el": -2.9334105187790516,
    "earth_range_km": 387464.7600269003,
    "earth_radius_deg": 0.9432001950737766,
-   "earth_frac": 0.834549957803637
+   "earth_frac": 0.8342161656557285
   },
   {
    "site": "malapert-massif",
@@ -1664,7 +1664,7 @@
    "earth_el": -2.664630549245325,
    "earth_range_km": 390690.5411981817,
    "earth_radius_deg": 0.9354118598478433,
-   "earth_frac": 0.9674760060611454
+   "earth_frac": 0.967290297365816
   },
   {
    "site": "malapert-massif",
@@ -1687,7 +1687,7 @@
    "sun_el": -2.783255695793064,
    "sun_range_km": 147560312.2970662,
    "sun_radius_deg": 0.2701324011873642,
-   "sun_frac": 0.3494562880537956,
+   "sun_frac": 0.0,
    "earth_az": 323.48803193356724,
    "earth_el": -3.3732714090336784,
    "earth_range_km": 404654.9690038705,
@@ -1715,7 +1715,7 @@
    "sun_el": -3.039676981135081,
    "sun_range_km": 148615063.54218847,
    "sun_radius_deg": 0.26821520269867044,
-   "sun_frac": 0.7357392130965965,
+   "sun_frac": 0.0,
    "earth_az": 321.37536681131496,
    "earth_el": -3.4657974528790163,
    "earth_range_km": 404265.3144652453,
@@ -1813,7 +1813,7 @@
    "sun_el": -0.8316790768000025,
    "sun_range_km": 151836609.24048245,
    "sun_radius_deg": 0.2625243903898823,
-   "sun_frac": 1.0,
+   "sun_frac": 0.9800195489424881,
    "earth_az": 329.6729656329471,
    "earth_el": 0.6759977806388847,
    "earth_range_km": 381743.307295552,
@@ -1986,7 +1986,7 @@
    "earth_el": 4.096565801039221,
    "earth_range_km": 360355.34954702464,
    "earth_radius_deg": 1.0141639771945243,
-   "earth_frac": 0.9576884900830636
+   "earth_frac": 0.9547417481776811
   },
   {
    "site": "nobile-rim-1",
@@ -2000,7 +2000,7 @@
    "earth_el": 3.0507258024724164,
    "earth_range_km": 364840.1614161288,
    "earth_radius_deg": 1.00169604886105,
-   "earth_frac": 0.34488353929442805
+   "earth_frac": 0.3407366420219668
   },
   {
    "site": "nobile-rim-1",
@@ -2070,7 +2070,7 @@
    "earth_el": 3.9536340331378326,
    "earth_range_km": 397663.89121053414,
    "earth_radius_deg": 0.9190072556288204,
-   "earth_frac": 0.08903088569009779
+   "earth_frac": 0.08284504413300141
   },
   {
    "site": "nobile-rim-1",
@@ -2275,7 +2275,7 @@
    "sun_el": -1.4537664052198955,
    "sun_range_km": 149937320.0840361,
    "sun_radius_deg": 0.26584986855343734,
-   "sun_frac": 0.3105676557541828,
+   "sun_frac": 0.0,
    "earth_az": 316.4078478625498,
    "earth_el": 5.590895612723635,
    "earth_range_km": 397641.2447845779,
@@ -2345,7 +2345,7 @@
    "sun_el": -2.5935519178933144,
    "sun_range_km": 147578205.68067244,
    "sun_radius_deg": 0.27009964825840227,
-   "sun_frac": 0.9882352630157482,
+   "sun_frac": 0.0,
    "earth_az": 315.95489044222336,
    "earth_el": -3.399375133797207,
    "earth_range_km": 378717.09101295564,
@@ -2406,7 +2406,7 @@
    "earth_el": 3.930558804705893,
    "earth_range_km": 358339.55458575155,
    "earth_radius_deg": 1.0198696324715486,
-   "earth_frac": 0.5322416053804401
+   "earth_frac": 0.5244315537002674
   },
   {
    "site": "nobile-rim-1",
@@ -2415,7 +2415,7 @@
    "sun_el": -2.5908581748830084,
    "sun_range_km": 151971344.8731176,
    "sun_radius_deg": 0.26229163837303204,
-   "sun_frac": 1.0,
+   "sun_frac": 0.0,
    "earth_az": 328.2340599014883,
    "earth_el": 9.683289011370416,
    "earth_range_km": 397882.1372489477,
@@ -2504,7 +2504,7 @@
    "earth_el": 3.5581798073222184,
    "earth_range_km": 404344.0982902069,
    "earth_radius_deg": 0.9038229797730721,
-   "earth_frac": 0.363133908965654
+   "earth_frac": 0.35432952046082844
   },
   {
    "site": "nobile-rim-1",
@@ -2536,10 +2536,10 @@
    "site": "connecting-ridge",
    "start_utc": "2027-06-01T00:00:00Z",
    "days": 30,
-   "sunlight_pct": 67.84722222222223,
-   "longest_dark_hours": 87.5,
+   "sunlight_pct": 59.09722222222222,
+   "longest_dark_hours": 93.5,
    "earth_link_pct": 55.69444444444444,
-   "combined_pct": 54.513888888888886,
+   "combined_pct": 45.90277777777778,
    "verdict": "Risky"
   },
   {
@@ -2553,41 +2553,81 @@
    "verdict": "Good"
   },
   {
+   "site": "connecting-ridge",
+   "start_utc": "2026-03-03T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 98.51190476190477,
+   "longest_dark_hours": 1.5,
+   "earth_link_pct": 5.059523809523809,
+   "combined_pct": 5.059523809523809,
+   "verdict": "Good"
+  },
+  {
+   "site": "connecting-ridge",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 100.0,
+   "longest_dark_hours": 0.0,
+   "earth_link_pct": 0.0,
+   "combined_pct": 0.0,
+   "verdict": "Good"
+  },
+  {
    "site": "malapert-massif",
    "start_utc": "2026-11-14T00:00:00Z",
    "days": 30,
-   "sunlight_pct": 76.94444444444444,
+   "sunlight_pct": 64.23611111111111,
    "longest_dark_hours": 110.5,
    "earth_link_pct": 100.0,
-   "combined_pct": 76.94444444444444,
+   "combined_pct": 64.23611111111111,
    "verdict": "Risky"
   },
   {
    "site": "malapert-massif",
    "start_utc": "2027-06-01T00:00:00Z",
    "days": 30,
-   "sunlight_pct": 40.90277777777778,
+   "sunlight_pct": 40.0,
    "longest_dark_hours": 328.0,
    "earth_link_pct": 100.0,
-   "combined_pct": 40.90277777777778,
+   "combined_pct": 40.0,
    "verdict": "Poor"
   },
   {
    "site": "malapert-massif",
    "start_utc": "2029-01-10T00:00:00Z",
    "days": 14,
-   "sunlight_pct": 9.970238095238097,
-   "longest_dark_hours": 293.0,
+   "sunlight_pct": 8.035714285714286,
+   "longest_dark_hours": 302.0,
    "earth_link_pct": 100.0,
-   "combined_pct": 9.970238095238097,
+   "combined_pct": 8.035714285714286,
    "verdict": "Poor"
+  },
+  {
+   "site": "malapert-massif",
+   "start_utc": "2026-03-03T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 98.51190476190477,
+   "longest_dark_hours": 1.5,
+   "earth_link_pct": 100.0,
+   "combined_pct": 98.51190476190477,
+   "verdict": "Good"
+  },
+  {
+   "site": "malapert-massif",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 69.34523809523809,
+   "longest_dark_hours": 41.0,
+   "earth_link_pct": 100.0,
+   "combined_pct": 69.34523809523809,
+   "verdict": "Risky"
   },
   {
    "site": "nobile-rim-1",
    "start_utc": "2026-11-14T00:00:00Z",
    "days": 30,
-   "sunlight_pct": 62.5,
-   "longest_dark_hours": 204.5,
+   "sunlight_pct": 60.69444444444444,
+   "longest_dark_hours": 217.5,
    "earth_link_pct": 40.97222222222222,
    "combined_pct": 33.05555555555556,
    "verdict": "Poor"
@@ -2596,9 +2636,9 @@
    "site": "nobile-rim-1",
    "start_utc": "2027-06-01T00:00:00Z",
    "days": 30,
-   "sunlight_pct": 31.458333333333332,
-   "longest_dark_hours": 184.0,
-   "earth_link_pct": 52.01388888888889,
+   "sunlight_pct": 30.833333333333336,
+   "longest_dark_hours": 187.5,
+   "earth_link_pct": 51.94444444444445,
    "combined_pct": 2.1527777777777777,
    "verdict": "Poor"
   },
@@ -2606,10 +2646,30 @@
    "site": "nobile-rim-1",
    "start_utc": "2029-01-10T00:00:00Z",
    "days": 14,
-   "sunlight_pct": 36.30952380952381,
-   "longest_dark_hours": 210.5,
+   "sunlight_pct": 34.970238095238095,
+   "longest_dark_hours": 214.5,
    "earth_link_pct": 66.66666666666666,
-   "combined_pct": 36.30952380952381,
+   "combined_pct": 34.970238095238095,
+   "verdict": "Poor"
+  },
+  {
+   "site": "nobile-rim-1",
+   "start_utc": "2026-03-03T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 58.03571428571429,
+   "longest_dark_hours": 42.0,
+   "earth_link_pct": 0.0,
+   "combined_pct": 0.0,
+   "verdict": "Risky"
+  },
+  {
+   "site": "nobile-rim-1",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 0.2976190476190476,
+   "longest_dark_hours": 162.0,
+   "earth_link_pct": 0.0,
+   "combined_pct": 0.0,
    "verdict": "Poor"
   }
  ]

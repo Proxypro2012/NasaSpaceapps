@@ -3,19 +3,28 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": { "node": "24.x" },
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:browser": "node scripts/verify-mission.mjs",
+    "capture:mission": "node scripts/capture-mission.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "lighthouse": "^13.6.0",
+    "playwright-lighthouse": "^4.0.0",
+    "react-doctor": "^0.9.23",
+    "react-grab": "^0.2.0",
+    "react-scan": "^0.5.7",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.0"

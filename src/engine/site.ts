@@ -10,7 +10,7 @@ export function directionOf(latDeg: number, lonDeg: number): Vec3 {
 }
 
 /** Builds the local east, north, up axes and observer position for a site. */
-export function makeSite(record: SiteRecord, mask: Float32Array, file: SitesFile): Site {
+export function makeSite(record: SiteRecord, mask: Float32Array, file: SitesFile, comparisonMask?: Float32Array): Site {
   if (mask.length !== file.mask_bins) {
     throw new Error(`${record.id}: horizon mask has ${mask.length} bins, expected ${file.mask_bins}`);
   }
@@ -31,6 +31,9 @@ export function makeSite(record: SiteRecord, mask: Float32Array, file: SitesFile
     up,
     mask,
     maskStepDeg: file.mask_step_deg,
+    comparison: comparisonMask
+      ? makeSite({ ...record, height_m: record.comparison_height_m }, comparisonMask, file)
+      : undefined,
   };
 }
 

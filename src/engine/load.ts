@@ -59,6 +59,7 @@ export interface ValidationFile {
       coarse: { sunlight_pct: number; earth_link_pct: number; verdict: string };
       fine: { sunlight_pct: number; earth_link_pct: number; verdict: string };
       verdict_flips: boolean;
+      yearly_verdict_flips: Record<string, number>;
     }[];
   };
   disc_vs_point: {
@@ -97,11 +98,14 @@ export async function loadAppData(): Promise<AppData> {
     json<TexturesFile>('textures.json'),
     json<ValidationFile>('validation.json'),
   ]);
-  const masks = await Promise.all(sitesFile.sites.map((s) => floats(s.horizon_file)));
+  const [masks, comparisonMasks] = await Promise.all([
+    Promise.all(sitesFile.sites.map((s) => floats(s.horizon_file))),
+    Promise.all(sitesFile.sites.map((s) => floats(s.comparison_horizon_file))),
+  ]);
   return {
     eph: new Ephemeris(meta, table),
     sitesFile,
-    sites: sitesFile.sites.map((s, i) => makeSite(s, masks[i], sitesFile)),
+    sites: sitesFile.sites.map((s, i) => makeSite(s, masks[i], sitesFile, comparisonMasks[i])),
     textures,
     validation,
   };

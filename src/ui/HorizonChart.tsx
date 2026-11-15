@@ -31,6 +31,9 @@ function trackPath(points: { az: number; el: number }[], x: (az: number) => numb
 }
 
 function visibility(b: BodySky): string {
+  if (b.terrainFrac - b.frac > 0.005) {
+    return b.frac <= 0.005 ? 'blocked by Earth (eclipse)' : `${pct(b.frac * 100)} in view during an eclipse`;
+  }
   if (b.frac >= 0.995) return 'in full view';
   if (b.frac <= 0.005) return 'hidden by terrain';
   return `${pct(b.frac * 100)} in view`;

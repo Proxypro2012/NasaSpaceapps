@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-11-14T18:59Z",
+  "generated_utc": "2026-11-15T21:56Z",
   "horizons": {
     "tolerance_deg": 0.1,
     "worst_abs_diff_deg": 0.0,
@@ -254,28 +254,28 @@
     "sites": [
       {
         "site": "connecting-ridge",
-        "sunlight_pct": 87.6,
+        "sunlight_pct": 85.8,
         "earth_link_pct": 51.0,
-        "longest_dark_hours": 196.5
+        "longest_dark_hours": 136.5
       },
       {
         "site": "malapert-massif",
-        "sunlight_pct": 55.7,
+        "sunlight_pct": 50.0,
         "earth_link_pct": 100.0,
-        "longest_dark_hours": 364.0
+        "longest_dark_hours": 370.0
       },
       {
         "site": "nobile-rim-1",
-        "sunlight_pct": 44.0,
-        "earth_link_pct": 47.3,
-        "longest_dark_hours": 308.5
+        "sunlight_pct": 42.4,
+        "earth_link_pct": 47.2,
+        "longest_dark_hours": 313.5
       }
     ],
     "note": "The study's figures are multi-year averages for its own best site, from radar terrain. Ours are one calendar year at different points from laser terrain, so they are a neighbourhood check, not a match."
   },
   "resolution": {
     "available": true,
-    "note": "Each horizon was rebuilt from the 40 m map at the same map point and the default window was recomputed.",
+    "note": "The app uses 40 m terrain. We compare it with 80 m terrain at the same points, for a reference window and all 365 daily starts in 2027 at 7, 14 and 30 days. The current window is also compared in the verdict card.",
     "sites": [
       {
         "site": "connecting-ridge",
@@ -291,7 +291,12 @@
           "earth_link_pct": 46.7,
           "verdict": "Good"
         },
-        "verdict_flips": false
+        "verdict_flips": false,
+        "yearly_verdict_flips": {
+          "7": 13,
+          "14": 16,
+          "30": 8
+        }
       },
       {
         "site": "malapert-massif",
@@ -307,7 +312,12 @@
           "earth_link_pct": 100.0,
           "verdict": "Risky"
         },
-        "verdict_flips": false
+        "verdict_flips": false,
+        "yearly_verdict_flips": {
+          "7": 38,
+          "14": 57,
+          "30": 10
+        }
       },
       {
         "site": "nobile-rim-1",
@@ -323,7 +333,12 @@
           "earth_link_pct": 41.0,
           "verdict": "Poor"
         },
-        "verdict_flips": false
+        "verdict_flips": false,
+        "yearly_verdict_flips": {
+          "7": 14,
+          "14": 3,
+          "30": 1
+        }
       }
     ]
   },
@@ -332,20 +347,20 @@
     "sites": [
       {
         "site": "connecting-ridge",
-        "disc_sunlight_pct": 87.6,
-        "point_sunlight_pct": 87.5,
+        "disc_sunlight_pct": 85.8,
+        "point_sunlight_pct": 85.8,
         "verdict_flips": false
       },
       {
         "site": "malapert-massif",
-        "disc_sunlight_pct": 55.7,
-        "point_sunlight_pct": 55.7,
-        "verdict_flips": false
+        "disc_sunlight_pct": 50.0,
+        "point_sunlight_pct": 50.0,
+        "verdict_flips": true
       },
       {
         "site": "nobile-rim-1",
-        "disc_sunlight_pct": 44.0,
-        "point_sunlight_pct": 44.0,
+        "disc_sunlight_pct": 42.4,
+        "point_sunlight_pct": 42.4,
         "verdict_flips": false
       }
     ]

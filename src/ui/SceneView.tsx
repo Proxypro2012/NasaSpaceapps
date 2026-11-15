@@ -10,7 +10,7 @@ interface Props {
 }
 
 /** Width kept clear on the right for the verdict card, in pixels. */
-const CARD_SPACE = 420;
+const CARD_SPACE = 480;
 
 /** Pre-rendered film grain: one noise tile drawn once, laid over the scene as a texture. */
 function grainTile(): string {
@@ -34,11 +34,12 @@ export function SceneView({ data, metrics }: Props) {
   const grain = useRef<HTMLDivElement>(null);
   const scene = useRef<MoonScene | null>(null);
   const latest = useRef(metrics);
-  latest.current = metrics;
+  useEffect(() => { latest.current = metrics; }, [metrics]);
   const moving = useStore((s) => s.moving);
   const siteId = useStore((s) => s.siteId);
   const playing = useStore((s) => s.playing);
   const [moved, setMoved] = useState(false);
+  const [assetError, setAssetError] = useState<string | null>(null);
 
   useEffect(() => {
     const s = new MoonScene({
@@ -54,6 +55,7 @@ export function SceneView({ data, metrics }: Props) {
         s.focusSite(id);
       },
       onViewChange: setMoved,
+      onAssetError: setAssetError,
       onOpenSite: (id) => {
         useStore.getState().setSite(id);
         useStore.getState().setPanel('dive');
@@ -64,7 +66,9 @@ export function SceneView({ data, metrics }: Props) {
     s.setVerdicts(verdictsOf(latest.current), false);
     s.setSelected(useStore.getState().siteId);
     // The scene reads the displayed date straight from the store on every change, outside React.
-    const unsubscribe = useStore.subscribe((state) => s.setTime(state.displayMs));
+    const unsubscribe = useStore.subscribe((state) => {
+      s.setTime(state.displayMs);
+    });
 
     const frame = () => {
       const el = canvas.current!;
@@ -73,7 +77,8 @@ export function SceneView({ data, metrics }: Props) {
       const wide = w >= 1080;
       // Leave room for the card on the right on wide screens.
       // Below the top bar; Earth sits about 1.3 Moon radii above the centre.
-      const top = 84;
+      const briefing = useStore.getState().briefing;
+      const top = briefing ? (wide ? 300 : 440) : (wide ? 84 : 180);
       const bottom = wide ? h - 40 : h - 64;
       const cx = wide ? (w - CARD_SPACE) * 0.5 + 10 : w / 2;
       const radius = Math.max(80, Math.min((bottom - top) / 2.5, (wide ? w - CARD_SPACE : w) * 0.3));
@@ -81,10 +86,13 @@ export function SceneView({ data, metrics }: Props) {
       s.labelBottomInset = wide ? 24 : 64;
     };
     frame();
+    const observer = new ResizeObserver(frame);
+    observer.observe(canvas.current!);
     window.addEventListener('resize', frame);
     if (grain.current) grain.current.style.backgroundImage = `url(${grainTile()})`;
     return () => {
       window.removeEventListener('resize', frame);
+      observer.disconnect();
       unsubscribe();
       s.dispose();
       scene.current = null;
@@ -103,6 +111,7 @@ export function SceneView({ data, metrics }: Props) {
       <canvas ref={canvas} aria-label="The Moon seen from below its south pole, lit from the Sun's real direction for the chosen date" />
       <div ref={grain} className="grain" aria-hidden="true" />
       <div ref={overlay} className="scene-overlay" />
+      {assetError && <p className="scene-error" role="status">{assetError}</p>}
       {moved && (
         <div className="scene-tools">
           <button type="button" className="pill pill-glass" onClick={() => scene.current?.focusSite(null)}>

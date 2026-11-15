@@ -7,6 +7,15 @@ export const STEP_MS = STEP_MINUTES * 60_000;
 export const DAY_MS = 86_400_000;
 const STEPS_PER_DAY = DAY_MS / STEP_MS;
 
+/** Shared UTC-day limits for the picker, search and state setter. Include the
+ * window endpoint because the skyline draws that endpoint too. */
+export function windowDateLimits(eph: Ephemeris, days: number): { first: number; last: number } {
+  return {
+    first: Math.ceil(eph.usableStartMs / DAY_MS) * DAY_MS,
+    last: Math.floor((eph.usableEndMs - days * DAY_MS) / DAY_MS) * DAY_MS,
+  };
+}
+
 /** A body counts as visible when at least this share of its disc clears the terrain. */
 export const VISIBLE_THRESHOLD = 0.5;
 const DARK_EPSILON = 1e-6;
@@ -52,12 +61,22 @@ export function windowMetrics(eph: Ephemeris, site: Site, startMs: number, days:
   }
   const sunlightPct = (100 * sunUp) / steps;
   const longestDarkHours = (longest * STEP_MINUTES) / 60;
+  const comparison = site.comparison ? windowMetrics(eph, site.comparison, startMs, days) : undefined;
+  const verdict = verdictOf(sunlightPct, longestDarkHours);
   return {
     sunlightPct,
     longestDarkHours,
     earthLinkPct: (100 * earthUp) / steps,
     combinedPct: (100 * both) / steps,
-    verdict: verdictOf(sunlightPct, longestDarkHours),
+    verdict,
+    resolution: comparison ? {
+      sunlightPct: comparison.sunlightPct,
+      longestDarkHours: comparison.longestDarkHours,
+      earthLinkPct: comparison.earthLinkPct,
+      combinedPct: comparison.combinedPct,
+      verdict: comparison.verdict,
+      sensitive: comparison.verdict !== verdict,
+    } : undefined,
   };
 }
 
@@ -105,10 +124,13 @@ export function bestWindow(
   windowDays: number,
 ): BestWindow | null {
   let best: BestWindow | null = null;
+  const { first, last } = windowDateLimits(eph, windowDays);
+  // The secondary map is an uncertainty check, not the search objective.
+  const primary = site.comparison ? { ...site, comparison: undefined } : site;
   for (let d = 0; d < searchDays; d++) {
     const startMs = searchStartDayMs + d * DAY_MS;
-    if (!eph.inRange(startMs) || !eph.inRange(startMs + windowDays * DAY_MS)) continue;
-    const m = windowMetrics(eph, site, startMs, windowDays);
+    if (startMs < first || startMs > last) continue;
+    const m = windowMetrics(eph, primary, startMs, windowDays);
     if (
       !best ||
       m.combinedPct > best.metrics.combinedPct + 1e-9 ||
@@ -120,6 +142,7 @@ export function bestWindow(
       best = { startMs, metrics: m };
     }
   }
+  if (best && site.comparison) best.metrics = windowMetrics(eph, site, best.startMs, windowDays);
   return best;
 }
 

@@ -3,7 +3,8 @@ import type { AppData } from '../engine/load';
 import { THRESHOLDS } from '../engine/metrics';
 import type { Site, WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
-import { HorizonChart } from './HorizonChart';
+import { EvidenceSummary, MissionComparison, MissionPrompt } from './Mission';
+import { VisibilityTimeline } from './VisibilityTimeline';
 import { VERDICT_GLYPH, duration, fmtDayMonth, isoDay, pct } from './format';
 import { useCountUp } from './hooks';
 import { download, encodeLink, windowCsv } from './share';
@@ -26,15 +27,37 @@ function Numeral({ value, format }: { value: number; format(v: number): string }
 
 export function VerdictBadge({ verdict }: { verdict: WindowMetrics['verdict'] }) {
   return (
-    <span className="verdict" data-verdict={verdict}>
+    <span className="verdict" data-verdict={verdict} aria-label={`${verdict} sunlight conditions`}>
       <i aria-hidden="true">{VERDICT_GLYPH[verdict]}</i>
       {verdict}
     </span>
   );
 }
 
+export function ResolutionNote({ metrics }: { metrics: WindowMetrics }) {
+  const other = metrics.resolution;
+  if (!other) return null;
+  return (
+    <details className="resolution-note" data-sensitive={other.sensitive} open={other.sensitive}>
+      <summary>{other.sensitive ? 'Terrain-sensitive sunlight verdict' : '40 m terrain estimate'}</summary>
+      <p>
+        The 40 m map gives {pct(metrics.sunlightPct)} sunlight and {metrics.verdict} conditions.
+        The 80 m comparison gives {pct(other.sunlightPct)} and {other.verdict}, with {duration(other.longestDarkHours)} of full darkness.
+        {other.sensitive ? ' Terrain detail changes this verdict; treat it as uncertain.' : ' Both maps give the same verdict for this window.'}
+        {' '}This comparison is a sensitivity check, not an error bound.
+      </p>
+    </details>
+  );
+}
+
 export function VerdictCard({ data, metrics }: Props) {
-  const { siteId, windowStartMs, windowDays, displayMs, targetMs, audience, playing } = useStore();
+  const siteId = useStore(s => s.siteId);
+  const windowStartMs = useStore(s => s.windowStartMs);
+  const windowDays = useStore(s => s.windowDays);
+  const targetMs = useStore(s => s.targetMs);
+  const audience = useStore(s => s.audience);
+  const playing = useStore(s => s.playing);
+  const comparison = useStore(s => s.comparison);
   const { setSite, setPanel, setPlaying, setNotice } = useStore.getState();
   const site = data.sites.find((s) => s.id === siteId) as Site;
   const m = metrics[siteId];
@@ -68,29 +91,31 @@ export function VerdictCard({ data, metrics }: Props) {
             </button>
           ))}
       </nav>
+      <MissionPrompt data={data} metrics={m} />
+      <MissionComparison />
 
-      {audience === 'planner' && (
+      {audience === 'planner' && !comparison && (
         <dl className="metrics">
           <div>
             <dt>Sunlight</dt>
             <dd>
               <Numeral value={m.sunlightPct} format={pct} />
+              <p>of {windowDays} days</p>
             </dd>
-            <p>of {windowDays} days</p>
           </div>
           <div>
             <dt>Longest dark</dt>
             <dd>
               <Numeral value={m.longestDarkHours} format={duration} />
+              <p>{noDark ? 'no full darkness in this window' : 'without direct sunlight'}</p>
             </dd>
-            <p>{noDark ? 'Sun never fully sets' : 'without the Sun'}</p>
           </div>
           <div>
-            <dt>Earth link</dt>
+            <dt>Earth in view</dt>
             <dd>
               <Numeral value={m.earthLinkPct} format={pct} />
+              <p>line of sight</p>
             </dd>
-            <p>line of sight</p>
           </div>
         </dl>
       )}
@@ -100,10 +125,11 @@ export function VerdictCard({ data, metrics }: Props) {
           <p>
             Over the {windowDays} days from {fmtDayMonth.format(windowStartMs)}, a lander here would see the Sun for{' '}
             <strong>{pct(m.sunlightPct)}</strong> of the time.{' '}
-            {noDark ? 'The Sun never fully disappears.' : `Its longest wait in the dark would be ${duration(m.longestDarkHours)}.`}
+            {noDark ? 'There is no full darkness in this window.' : `Its longest wait without direct sunlight would be ${duration(m.longestDarkHours)}.`}
           </p>
           <p>
-            It could see Earth, and so talk to it directly, for <strong>{pct(m.earthLinkPct)}</strong> of the time.
+            At least half of Earth would clear the skyline for <strong>{pct(m.earthLinkPct)}</strong> of the time.
+            A working radio link also depends on the antenna and radio system.
           </p>
         </div>
       )}
@@ -112,11 +138,12 @@ export function VerdictCard({ data, metrics }: Props) {
         <div className="plain">
           <p className="headline">
             {m.verdict === 'Good'
-              ? 'A good place to land right now.'
+              ? 'Favourable sunlight conditions.'
               : m.verdict === 'Risky'
-                ? 'You could land here, but it would be tight.'
-                : 'Not a good time to land here.'}
+                ? 'Mixed sunlight and darkness.'
+                : 'Limited sunlight or long darkness.'}
           </p>
+          <p className="muted">The verdict describes sunlight. Earth visibility is shown separately; landing safety is not assessed.</p>
           <p>
             Sunlight {pct(m.sunlightPct)} of the time, and Earth in view {pct(m.earthLinkPct)} of the time, over the next {windowDays}{' '}
             days.
@@ -127,8 +154,11 @@ export function VerdictCard({ data, metrics }: Props) {
         </div>
       )}
 
+      <ResolutionNote metrics={m} />
+      <EvidenceSummary data={data} metrics={m} />
+      <VisibilityTimeline data={data} site={site} startMs={windowStartMs} days={windowDays} />
       <details className="more" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-        <summary>Skyline and details</summary>
+        <summary>Site details and exports</summary>
         {open && (
           <div className="more-body">
             <p className="muted">
@@ -148,7 +178,6 @@ export function VerdictCard({ data, metrics }: Props) {
                 </p>
               </>
             )}
-            <HorizonChart eph={data.eph} site={site} ms={displayMs} windowStartMs={windowStartMs} windowDays={windowDays} />
             <button type="button" className="pill pill-glass" onClick={() => setPanel('dive')}>
               Open site view
             </button>

@@ -147,6 +147,8 @@ uniform sampler2D uNormal;
 uniform sampler2D uPoleNormal;
 uniform vec3 uSunDir;
 uniform vec3 uEarthDir;
+uniform vec3 uSunKm;
+uniform vec3 uEarthKm;
 uniform float uPoleHalf;   // half-width of the polar map, metres
 uniform float uReady;
 
@@ -154,6 +156,24 @@ varying vec2 vUv;
 varying vec3 vDir;
 
 const float MOON_RADIUS_M = 1737400.0;
+
+// Direct solar disc remaining at this surface point. The small-angle disc
+// overlap is for rendering only; window numbers come from the terrain engine.
+float eclipseLight(vec3 surface) {
+  vec3 s = uSunKm - surface;
+  vec3 e = uEarthKm - surface;
+  float r = asin(695700.0 / length(s));
+  float R = asin(6378.137 / length(e));
+  float d = acos(clamp(dot(normalize(s), normalize(e)), -1.0, 1.0));
+  if (d >= r + R) return 1.0;
+  if (d + r <= R) return 0.0;
+  if (d + R <= r) return 1.0 - R * R / (r * r);
+  float a = acos(clamp((d*d + r*r - R*R) / (2.0*d*r), -1.0, 1.0));
+  float b = acos(clamp((d*d + R*R - r*r) / (2.0*d*R), -1.0, 1.0));
+  float q = max(0.0, (-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R));
+  float covered = (r*r*a + R*R*b - 0.5*sqrt(q)) / (3.14159265*r*r);
+  return clamp(1.0 - covered, 0.0, 1.0);
+}
 
 void main() {
   vec3 dir = normalize(vDir);
@@ -180,7 +200,7 @@ void main() {
   float lit = pow(max(dot(n, uSunDir), 0.0), 0.82);
   float day = smoothstep(-0.07, 0.05, geo);
   float earthshine = 0.03 * max(dot(dir, uEarthDir), 0.0);
-  vec3 color = albedo * (lit * day * 2.5 + 0.012) + albedo * earthshine * vec3(0.75, 0.9, 1.25);
+  vec3 color = albedo * (lit * day * eclipseLight(dir * 1737.4) * 2.5 + 0.012) + albedo * earthshine * vec3(0.75, 0.9, 1.25);
 
   gl_FragColor = vec4(pow(clamp(color, 0.0, 1.0), vec3(1.0 / 2.2)), 1.0);
 }

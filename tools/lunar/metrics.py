@@ -46,6 +46,32 @@ def series(site: dict, mask: np.ndarray, ets: np.ndarray, point_sun: bool = Fals
         else:
             frac = visible_fraction_array(mask, az, el, rad)
         out[key] = {"az": az, "el": el, "range_km": rng, "radius_deg": rad, "frac": frac}
+    sun, earth = out['sun'], out['earth']
+    sa, se, ea, ee = [np.radians(a) for a in (sun['az'], sun['el'], earth['az'], earth['el'])]
+    delta = ea - sa
+    dot = np.sin(se) * np.sin(ee) + np.cos(se) * np.cos(ee) * np.cos(delta)
+    sep = np.degrees(np.arccos(np.clip(dot, -1, 1)))
+    if point_sun:
+        sun['frac'] = sun['frac'] * (sep >= earth['radius_deg'])
+    else:
+        affected = np.nonzero(sep < sun['radius_deg'] + earth['radius_deg'])[0]
+        k = (np.arange(128) + 0.5) / 128 * 2 - 1
+        for i in affected:
+            sr, er = sun['radius_deg'][i], earth['radius_deg'][i]
+            if sep[i] + sr <= er:
+                sun['frac'][i] = 0.0
+                continue
+            scale = sep[i] / max(np.sin(np.radians(sep[i])), 1e-12)
+            cx = np.cos(ee[i]) * np.sin(delta[i]) * scale
+            cy = (np.cos(se[i]) * np.sin(ee[i]) - np.sin(se[i]) * np.cos(ee[i]) * np.cos(delta[i])) * scale
+            x = k * sr
+            half = np.sqrt(np.maximum(0, sr * sr - x * x))
+            bottom = np.maximum(-half, mask_at(mask, sun['az'][i] + x / max(np.cos(se[i]), 1e-6)) - sun['el'][i])
+            er2 = er * er - (x - cx) ** 2
+            eh = np.sqrt(np.maximum(0, er2))
+            blocked = np.where(er2 > 0, np.maximum(0, np.minimum(half, cy + eh) - np.maximum(bottom, cy - eh)), 0)
+            seen = np.maximum(0, np.maximum(0, half - bottom) - blocked)
+            sun['frac'][i] = min(sun['frac'][i], max(0, float(seen.sum() / (2 * half.sum()))))
     return out
 
 
@@ -55,7 +81,7 @@ def visible_fraction_array(mask, az, el, rad):
     cos_el = np.maximum(np.cos(np.radians(el)), 1e-6)
     horizon = mask_at(mask, az[:, None] + k[None, :] * (rad / cos_el)[:, None])
     seen = np.clip(el[:, None] + half - horizon, 0.0, 2.0 * half)
-    return seen.sum(axis=1) / (2.0 * half.sum(axis=1))
+    return np.clip(seen.sum(axis=1) / (2.0 * half.sum(axis=1)), 0, 1)
 
 
 def longest_run_hours(flags: np.ndarray, step_minutes: float = STEP_MINUTES) -> float:

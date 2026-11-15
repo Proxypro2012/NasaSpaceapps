@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { AppData } from '../engine/load';
 import { DAY_MS } from '../engine/metrics';
 import { AUDIENCES, WINDOW_OPTIONS, dateLimits, useStore } from '../state/store';
-import { jumpToBest } from './actions';
+import { BestWindowButton } from './Mission';
+import { launchMission } from './actions';
 import { fmtDate, fmtWeekday, isoDay } from './format';
 import { useEscape } from './hooks';
 
@@ -12,7 +13,9 @@ const AUDIENCE_LABEL = { planner: 'Planner', educator: 'Educator', public: 'Publ
 const DRAG_PX_PER_DAY = 14;
 
 export function Header({ data }: { data: AppData }) {
-  const { windowStartMs, windowDays, audience } = useStore();
+  const windowStartMs = useStore(s => s.windowStartMs);
+  const windowDays = useStore(s => s.windowDays);
+  const audience = useStore(s => s.audience);
   const { setDate, stepDays, setWindowDays, setAudience, setPanel } = useStore.getState();
   const limits = dateLimits(data, windowDays);
   const drag = useRef<{ x: number; startMs: number; moved: boolean } | null>(null);
@@ -23,11 +26,20 @@ export function Header({ data }: { data: AppData }) {
   useEscape(() => setMenuOpen(false), menuOpen);
   useEffect(() => {
     if (!menuOpen) return;
+    const position = () => {
+      const wrap = menu.current;
+      if (wrap) wrap.style.setProperty('--menu-top', `${wrap.getBoundingClientRect().bottom + 8}px`);
+    };
+    position();
+    window.addEventListener('resize', position);
     const away = (e: PointerEvent) => {
       if (!menu.current?.contains(e.target as Node)) setMenuOpen(false);
     };
     window.addEventListener('pointerdown', away);
-    return () => window.removeEventListener('pointerdown', away);
+    return () => {
+      window.removeEventListener('pointerdown', away);
+      window.removeEventListener('resize', position);
+    };
   }, [menuOpen]);
 
   return (
@@ -83,9 +95,7 @@ export function Header({ data }: { data: AppData }) {
       </div>
 
       <div className="topbar-right">
-        <button type="button" className="pill" onClick={() => jumpToBest(data)}>
-          Jump to best window
-        </button>
+        <BestWindowButton data={data} />
         <button type="button" className="pill pill-glass" onClick={() => setPanel('trust')}>
           How we know
         </button>
@@ -132,6 +142,8 @@ export function Header({ data }: { data: AppData }) {
               >
                 Calendar of best days
               </button>
+              <button type="button" className="menu-item" onClick={() => { setMenuOpen(false); launchMission(); }}>Restart example mission</button>
+              <button type="button" className="menu-item" onClick={() => { setMenuOpen(false); setPanel('submission'); }}>Project guide &amp; walkthrough</button>
             </div>
           )}
         </div>
