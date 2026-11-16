@@ -180,6 +180,9 @@ new presets and their links, the one-year search time and calendar, and that
 the card fits without inner scrolling at 375, 768 and 1280 px. The other three
 browser checks still pass, and the walkthrough and screenshots were re-recorded.
 
+Code commit `2b98374` is published at https://southlight-tau.vercel.app/. All four
+browser-verification commands pass against it; the one-year search took 139 ms there.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run
