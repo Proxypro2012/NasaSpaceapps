@@ -91,3 +91,23 @@ View loading and failures are explicit; geometric results and the skyline remain
 available if a visual asset fails. Canvas size changes are observed after layout.
 Timeline strips clip their cursor's empty translated bounds; the actual data
 segments retain their full proportions, with larger interruption controls below.
+
+## Scene clock and assessment window
+The header date pill names Scene time and shows the actual displayed UTC date
+and clock time, including during date travel. Its picker, arrows and drag inspect
+moments inside the current assessment window. The picker is disabled during
+travel; the timeline can interrupt travel. Use 12px labels, 17px date numerals,
+and the existing pill surface, focus ring and 1.2-second ordinary date motion.
+
+The result card names its full assessment interval and has a visible Window
+start date input. These controls shift the window and recompute totals. Calendar
+and timeline selections retain that interval and its totals, with this behavior
+explained beside the range. Inputs remain reachable at 375px; the mobile
+briefing moves to 216px to clear the two-line scene-clock pill.
+
+Shared links restore the window, moment, site and audience atomically on first
+load, hash changes and browser history navigation. Invalid values are ignored or
+bounded using the same rules as initial load. URL writes must never overwrite an
+incoming navigation or create a history loop. External navigation cuts to its
+saved moment and stops playback. Record the Sun/Earth motion beat in the
+whole-Moon view, explicitly resetting the camera before the beat.

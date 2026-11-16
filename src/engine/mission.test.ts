@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { Ephemeris } from './ephemeris';
 import type { AppData } from './load';
 import { DAY_MS, STEP_MS, windowMetrics } from './metrics';
@@ -9,7 +9,9 @@ import { skyAt } from './sky';
 import { obstructionExplanation, visibilityCause, visibilityPeriods, visibilitySamples } from './timeline';
 import { EXAMPLE_MISSION } from '../state/mission';
 import { useStore } from '../state/store';
-import { jumpToBest } from '../ui/actions';
+import { findBetterWindow, jumpToBest } from '../ui/actions';
+import { decodeLink, encodeLink } from '../ui/share';
+import { startLocationSync } from '../state/location';
 
 const root = resolve(__dirname, '../../public/data');
 const json = (name: string) => JSON.parse(readFileSync(resolve(root, name), 'utf8'));
@@ -25,6 +27,94 @@ const data: AppData = {
 };
 const site = data.sites.find(s => s.id === EXAMPLE_MISSION.siteId)!;
 const launch = () => { useStore.getState().init(data, {}); useStore.getState().startMission(); };
+
+describe('shared-link navigation', () => {
+  const a = { windowStartMs: Date.UTC(2026, 10, 15), windowDays: 30, targetMs: Date.UTC(2026, 10, 30, 12), siteId: site.id, audience: 'planner' as const };
+  const b = { windowStartMs: Date.UTC(2027, 0, 1), windowDays: 7, targetMs: Date.UTC(2027, 0, 3, 12, 30), siteId: 'malapert-massif', audience: 'educator' as const };
+  const setup = () => {
+    useStore.getState().init(data, a);
+    const events = Object.assign(new EventTarget(), { matchMedia: () => ({ matches: false }) });
+    const address = { hash: encodeLink(a) };
+    const replaceState = vi.fn((_state: unknown, _title: string, hash: string) => { address.hash = hash; });
+    vi.stubGlobal('window', events);
+    vi.stubGlobal('location', address);
+    vi.stubGlobal('history', { replaceState });
+    return { events, address, replaceState, stop: startLocationSync() };
+  };
+
+  it('restores all fields together on hash/history events, stops motion, and cleans up', () => {
+    const { events, address, stop } = setup();
+    try {
+      useStore.setState({ moving: true, playing: true });
+      address.hash = encodeLink(b);
+      events.dispatchEvent(new Event('popstate'));
+      const s = useStore.getState();
+      for (const key of ['windowStartMs', 'windowDays', 'targetMs', 'siteId', 'audience'] as const) expect(s[key]).toBe(b[key]);
+      expect(s.displayMs).toBe(b.targetMs);
+      expect(s.moving || s.playing).toBe(false);
+      expect(s.comparison).toBeNull();
+      let changes = 0;
+      const unsubscribe = useStore.subscribe(() => changes++);
+      events.dispatchEvent(new Event('hashchange'));
+      expect(changes).toBe(0);
+      unsubscribe();
+      stop();
+      address.hash = encodeLink(a);
+      events.dispatchEvent(new Event('hashchange'));
+      expect(useStore.getState().siteId).toBe(b.siteId);
+    } finally { stop(); vi.unstubAllGlobals(); }
+  });
+
+  it('does not overwrite an incoming URL before its navigation event arrives', () => {
+    const { events, address, stop } = setup();
+    try {
+      const incoming = encodeLink(b);
+      address.hash = incoming;
+      useStore.getState().setNotice('An intervening UI update');
+      expect(address.hash).toBe(incoming);
+      events.dispatchEvent(new Event('hashchange'));
+      expect(useStore.getState().windowDays).toBe(7);
+      expect(useStore.getState().siteId).toBe(b.siteId);
+    } finally { stop(); vi.unstubAllGlobals(); }
+  });
+
+  it('bounds out-of-range dates and ignores invalid or unrelated fragments', () => {
+    const { events, address, stop } = setup();
+    try {
+      address.hash = '#date=2099-01-01&days=7&site=missing';
+      events.dispatchEvent(new Event('hashchange'));
+      const s = useStore.getState();
+      expect(s.targetMs).toBeGreaterThanOrEqual(s.windowStartMs);
+      expect(s.targetMs).toBeLessThan(s.windowStartMs + 7 * DAY_MS);
+      expect(s.siteId).toBe(site.id);
+      expect(s.notice).toContain('nearest date');
+      const previous = s.windowStartMs;
+      address.hash = '#unrelated-section';
+      events.dispatchEvent(new Event('hashchange'));
+      expect(useStore.getState().windowStartMs).toBe(previous);
+      expect(address.hash).toBe(encodeLink(useStore.getState()));
+      expect(decodeLink('#date=2027-02-30&days=9&at=2027-01-01T24%3A00Z&view=invalid')).toEqual({});
+    } finally { stop(); vi.unstubAllGlobals(); }
+  });
+
+  it('cancels a pending search even when a restored link has equivalent values', async () => {
+    const { events, address, stop } = setup();
+    let resume: FrameRequestCallback = () => {};
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => { resume = cb; return 1; });
+    try {
+      const pending = findBetterWindow(data);
+      const version = useStore.getState().navigationVersion;
+      address.hash = encodeLink(a).replace('T12%3A00Z', 'T12%3A00%3A00Z');
+      events.dispatchEvent(new Event('hashchange'));
+      expect(useStore.getState().navigationVersion).toBe(version + 1);
+      resume(0);
+      await pending;
+      expect(useStore.getState().windowStartMs).toBe(a.windowStartMs);
+      expect(useStore.getState().comparison).toBeNull();
+      expect(useStore.getState().searching).toBe(false);
+    } finally { stop(); vi.unstubAllGlobals(); }
+  });
+});
 
 describe('guided mission and linked science', () => {
   it('starts a reproducible mission and keeps deep links out of onboarding', () => {

@@ -93,8 +93,17 @@ same moment used by the skyline and scene. Both terrain maps are searched to
 flag recommendations whose preferred dates depend on map detail.
 
 Open `/?guide=1` for the project introduction, screenshots and captioned recording.
+
+The header's **Scene time** is the UTC moment actually shown. The result card's
+**Assessment window** labels the full interval used for its totals and has its
+own start-date control. Calendar and timeline selections inspect moments inside
+that interval. Shared links restore both dates, site and audience in a fresh tab,
+in an already-open tab, and through browser back/forward navigation.
 Source materials are in `public/submission/`; current submission-requirement
 findings are in `docs/submission-requirements.md`.
 
 Deploy with the authenticated Vercel CLI using `vercel --prod`. The project
 configuration builds `dist/`; `.vercelignore` excludes raw data and environments.
+
+To regenerate the recorded walkthrough and screenshots, have FFmpeg installed
+and a production preview running, then run `npm run capture:mission`.

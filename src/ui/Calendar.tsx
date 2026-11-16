@@ -122,6 +122,7 @@ export function CalendarSheet({ data }: { data: AppData }) {
           </button>
         </header>
         <div className="sheet-body">
+          <p className="muted">Inspect a day within the current assessment window. Selecting a square changes the scene time; the window totals keep the same date range.</p>
           <Calendar
             sites={data.sites}
             cells={cells}

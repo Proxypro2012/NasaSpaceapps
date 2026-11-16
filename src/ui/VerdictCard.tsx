@@ -5,6 +5,7 @@ import type { Site, WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
 import { EvidenceSummary, MissionComparison, MissionPrompt } from './Mission';
 import { VisibilityTimeline } from './VisibilityTimeline';
+import { WindowRange } from './WindowRange';
 import { VERDICT_GLYPH, duration, fmtDayMonth, isoDay, pct } from './format';
 import { useCountUp } from './hooks';
 import { download, encodeLink, windowCsv } from './share';
@@ -91,6 +92,7 @@ export function VerdictCard({ data, metrics }: Props) {
             </button>
           ))}
       </nav>
+      <WindowRange data={data} />
       <MissionPrompt data={data} metrics={m} />
       <MissionComparison />
 

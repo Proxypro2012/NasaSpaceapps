@@ -1,6 +1,8 @@
 import { Component, lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { loadAppData } from './engine/load';
 import { startDateMotion } from './state/motion';
+import { startLocationSync } from './state/location';
+import { DAY_MS } from './engine/metrics';
 import { useStore } from './state/store';
 import { CalendarSheet } from './ui/Calendar';
 import { Header } from './ui/Header';
@@ -9,10 +11,8 @@ import { VerdictCard } from './ui/VerdictCard';
 import { useEscape, useModalFocus, useWindowMetrics } from './ui/hooks';
 import { MissionBriefing } from './ui/Mission';
 import { SubmissionSheet } from './ui/SubmissionSheet';
-import { decodeLink, encodeLink } from './ui/share';
+import { decodeLink } from './ui/share';
 
-// Read the link once, before anything rewrites the address bar.
-const linked = decodeLink(location.hash);
 const SceneView = lazy(() => import('./ui/SceneView').then(m => ({ default: m.SceneView })));
 const DiveView = lazy(() => import('./ui/DiveView').then(m => ({ default: m.DiveView })));
 
@@ -44,14 +44,16 @@ export function App() {
   useModalFocus();
 
   useEffect(() => {
+    const stopLocationSync = startLocationSync();
+    const stopDateMotion = startDateMotion();
     // Load view code alongside the data; the briefing can render immediately.
     void import('./ui/SceneView').catch(() => {});
     loadAppData()
       .then((d) => {
-        if (!useStore.getState().data) useStore.getState().init(d, linked);
+        if (!useStore.getState().data) useStore.getState().init(d, decodeLink(location.hash));
       })
       .catch((e: Error) => useStore.getState().setLoadError(e.message));
-    return startDateMotion();
+    return () => { stopDateMotion(); stopLocationSync(); };
   }, []);
 
   if (loadError) {
@@ -69,21 +71,11 @@ function Loaded() {
   const data = useStore((s) => s.data);
   const windowStartMs = useStore(s => s.windowStartMs);
   const windowDays = useStore(s => s.windowDays);
-  const targetMs = useStore(s => s.targetMs);
-  const siteId = useStore(s => s.siteId);
   const audience = useStore(s => s.audience);
   const panel = useStore(s => s.panel);
   const notice = useStore(s => s.notice);
-  const moving = useStore(s => s.moving);
-  const playing = useStore(s => s.playing);
   const briefing = useStore(s => s.briefing);
   const metrics = useWindowMetrics(data, windowStartMs, windowDays);
-
-  // Keep the address bar in step, so the page can be shared or reloaded as it stands.
-  useEffect(() => {
-    if (!data || moving || playing) return;
-    history.replaceState(null, '', encodeLink({ windowStartMs, windowDays, targetMs, siteId, audience }));
-  }, [data, windowStartMs, windowDays, targetMs, siteId, audience, moving, playing]);
 
   useEffect(() => {
     if (data && new URLSearchParams(location.search).has('guide')) useStore.getState().setPanel('submission');
@@ -93,8 +85,10 @@ function Loaded() {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement;
       if (useStore.getState().panel !== 'none' || e.defaultPrevented || t.isContentEditable || t.closest('input, select, textarea, video') || e.metaKey || e.ctrlKey || e.altKey) return;
-      if (e.key === 'ArrowLeft') useStore.getState().stepDays(-1);
-      else if (e.key === 'ArrowRight') useStore.getState().stepDays(1);
+      const s = useStore.getState();
+      if (!s.data) return;
+      if (e.key === 'ArrowLeft') s.setMoment(s.targetMs - DAY_MS, true);
+      else if (e.key === 'ArrowRight') s.setMoment(s.targetMs + DAY_MS, true);
       else return;
       e.preventDefault();
     };
@@ -112,7 +106,7 @@ function Loaded() {
       </ViewBoundary> : <div className="scene"><p className="scene-error" role="status">Loading NASA positions and terrain…</p></div>}
       {data ? <Header data={data} /> : <header className="topbar"><div className="brand"><span className="wordmark">Southlight</span></div></header>}
       <main className="layout">
-        <MissionBriefing hidden={Object.keys(linked).length > 0} />
+        <MissionBriefing hidden={!data && Object.keys(decodeLink(location.hash)).length > 0} />
         {data && <VerdictCard data={data} metrics={metrics} />}
       </main>
       </div>

@@ -25,6 +25,11 @@ motion. Select a period on the shared Sun/Earth timeline to inspect the same
 UTC moment in the Moon scene, terrain view and skyline. Text distinguishes
 terrain obstruction from a geometric lunar eclipse.
 
+The header's Scene time shows that moment. A separate Assessment window labels
+the interval behind the totals and offers a window-start control. Inspecting a
+calendar day changes the scene time while preserving the full window's totals.
+Shared links restore both dates, site and view in new or already-open tabs.
+
 These figures are model estimates using a half-disc visibility threshold and
 30-minute steps, not a claim of uninterrupted observed conditions.
 

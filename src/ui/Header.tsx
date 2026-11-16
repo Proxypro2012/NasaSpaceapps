@@ -1,25 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AppData } from '../engine/load';
-import { DAY_MS } from '../engine/metrics';
-import { AUDIENCES, WINDOW_OPTIONS, dateLimits, useStore } from '../state/store';
+import { AUDIENCES, WINDOW_OPTIONS, useStore } from '../state/store';
 import { BestWindowButton } from './Mission';
 import { launchMission } from './actions';
-import { fmtDate, fmtWeekday, isoDay } from './format';
+import { SceneClock } from './SceneClock';
 import { useEscape } from './hooks';
 
 const AUDIENCE_LABEL = { planner: 'Planner', educator: 'Educator', public: 'Public' } as const;
 
-/** Pixels of horizontal drag that move the date by one day. */
-const DRAG_PX_PER_DAY = 14;
-
 export function Header({ data }: { data: AppData }) {
-  const windowStartMs = useStore(s => s.windowStartMs);
   const windowDays = useStore(s => s.windowDays);
   const audience = useStore(s => s.audience);
-  const { setDate, stepDays, setWindowDays, setAudience, setPanel } = useStore.getState();
-  const limits = dateLimits(data, windowDays);
-  const drag = useRef<{ x: number; startMs: number; moved: boolean } | null>(null);
-  const input = useRef<HTMLInputElement>(null);
+  const { setWindowDays, setAudience, setPanel } = useStore.getState();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const menu = useRef<HTMLDivElement>(null);
@@ -48,51 +40,7 @@ export function Header({ data }: { data: AppData }) {
         <span className="wordmark">Southlight</span>
       </div>
 
-      <div className="datebar" role="group" aria-label="Date">
-        <button type="button" className="round" aria-label="Previous day" onClick={() => stepDays(-1)}>
-          ‹
-        </button>
-        <div
-          className="date-scrub"
-          title="Drag sideways to scrub through days"
-          onPointerDown={(e) => {
-            drag.current = { x: e.clientX, startMs: windowStartMs, moved: false };
-            e.currentTarget.setPointerCapture(e.pointerId);
-          }}
-          onPointerMove={(e) => {
-            const d = drag.current;
-            if (!d) return;
-            const days = Math.round((e.clientX - d.x) / DRAG_PX_PER_DAY);
-            if (days !== 0) d.moved = true;
-            // While scrubbing, the date cuts straight to each day so it tracks the pointer.
-            if (d.moved) setDate(d.startMs + days * DAY_MS, false);
-          }}
-          onPointerUp={() => {
-            const d = drag.current;
-            drag.current = null;
-            if (d && !d.moved) input.current?.showPicker?.();
-          }}
-          onPointerCancel={() => (drag.current = null)}
-        >
-          <span className="date-weekday">{fmtWeekday.format(windowStartMs)}</span>
-          <span className="date-value">{fmtDate.format(windowStartMs)}</span>
-          <input
-            ref={input}
-            type="date"
-            aria-label="Start date of the window (UTC)"
-            value={isoDay(windowStartMs)}
-            min={isoDay(limits.first)}
-            max={isoDay(limits.last)}
-            onChange={(e) => {
-              const ms = Date.parse(`${e.target.value}T00:00:00Z`);
-              if (Number.isFinite(ms)) setDate(ms);
-            }}
-          />
-        </div>
-        <button type="button" className="round" aria-label="Next day" onClick={() => stepDays(1)}>
-          ›
-        </button>
-      </div>
+      <SceneClock />
 
       <div className="topbar-right">
         <BestWindowButton data={data} />

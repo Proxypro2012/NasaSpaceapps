@@ -6,7 +6,7 @@ Public project guide: https://southlight-tau.vercel.app/?guide=1
 
 ## Results
 
-- All 25 engine/state tests pass. Type checking, the production build and
+- All 29 engine/state tests pass. Type checking, the production build and
   `git diff --check` pass.
 - Real Google Chrome 149 browser checks passed against both the local
   production build and the anonymous public Vercel domain, at 375, 390, 768
@@ -32,6 +32,22 @@ Public project guide: https://southlight-tau.vercel.app/?guide=1
 
 ## Review and quality limits
 
+Date-navigation follow-up: the pill shows the displayed scene moment; a distinct
+card control and range name the assessment window. Calendar selection changes
+the moment without altering window totals. Real-Chrome tests cover same-tab
+hash navigation without reload, fresh-tab restoration, browser back/forward,
+malformed/out-of-range links, independent scene/window inputs, and navigation
+while a search is pending. Playback is paused before a search captures its
+inputs. A restoration version also cancels pending searches when an incoming
+link uses an equivalent serialization of the same view. The independent review
+found no actionable regressions in the first pass; the focused pass identified
+this equivalent-link race and a stale loading-time briefing mask, both fixed and
+covered by an additional state test and a delayed-load browser regression.
+The final focused review confirmed both fixes and reported no findings.
+Browser verification was performed separately in the main session.
+The recording explicitly resets Whole Moon before the motion beat, and its
+screenshots show the updated clock and range.
+
 The first independent Codex review found stale playback comparisons, scene sizing
 after mobile briefing dismissal, and missing media assets. All three were fixed
 and verified in the browser. A final independent rerun hit the Codex CLI usage
@@ -44,7 +60,9 @@ inert background) and an existing non-component export in Calendar. React Scan
 Lite captured commit events in the production build, but its fiber trees were
 empty there, so no claim of zero unnecessary fiber renders is made.
 
-Three serial real-Chrome Lighthouse runs on the public deployment gave:
+The preceding mission build's three serial real-Chrome Lighthouse runs on the
+public deployment gave the following baseline (not a new performance audit of
+the date-navigation follow-up):
 
 | Category | Desktop median | Throttled mobile median |
 | --- | ---: | ---: |

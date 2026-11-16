@@ -1,6 +1,8 @@
 import { chromium } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 const base = process.env.APP_URL ?? 'http://127.0.0.1:4173';
 const assets = resolve('public/submission');
@@ -42,6 +44,9 @@ await page.evaluate(() => {
   const timeline = document.querySelector('.visibility-timeline');
   card.scrollTo({ top: timeline.offsetTop - 20, behavior: 'smooth' });
 });
+await at(12);
+await page.getByRole('button', { name: 'Whole Moon', exact: true }).click();
+await page.waitForFunction(() => document.querySelector('.scene-tools button')?.getAttribute('aria-pressed') === 'true');
 await at(13.5);
 await page.locator('.topbar-right > .pill').first().click();
 await caption('Find a better window. The scene accelerates\nthrough real dates, then slows at the recommendation.');
@@ -58,7 +63,22 @@ await at(29.8);
 const video = page.video();
 await context.close();
 await video.saveAs('/tmp/southlight-walkthrough.webm');
+const stills = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+const still = await stills.newPage();
+await still.goto(base);
+await still.waitForLoadState('networkidle');
+await still.screenshot({ path: resolve(assets, 'opening-desktop.jpg'), type: 'jpeg', quality: 92 });
+await still.getByRole('button', { name: 'Try a mission', exact: true }).click();
+await still.screenshot({ path: resolve(assets, 'mission-original.jpg'), type: 'jpeg', quality: 92 });
+await still.locator('.mission-prompt .pill').click();
+await still.locator('.mission-comparison').waitFor();
+await still.screenshot({ path: resolve(assets, 'mission-comparison.jpg'), type: 'jpeg', quality: 92 });
+await stills.close();
 await browser.close();
+await promisify(execFile)('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
+  '-ss', String(offsetSeconds), '-i', '/tmp/southlight-walkthrough.webm', '-t', '29.6',
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-pix_fmt', 'yuv420p',
+  '-movflags', '+faststart', '-an', resolve(assets, 'southlight-walkthrough.mp4')]);
 await writeFile('/tmp/southlight-recording.json', JSON.stringify({ offsetSeconds, durationSeconds: 29.6, errors }, null, 2));
 if (errors.length) throw new Error(errors.join('\n'));
 console.log(JSON.stringify({ offsetSeconds, video: '/tmp/southlight-walkthrough.webm', durationSeconds: 29.6 }));

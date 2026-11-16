@@ -32,6 +32,8 @@ interface State {
   missionActive: boolean;
   comparison: WindowComparison | null;
   searching: boolean;
+  /** Increments when a saved view is restored, even if its values are equal. */
+  navigationVersion: number;
 
   init(data: AppData, initial: Partial<Pick<State, 'windowStartMs' | 'windowDays' | 'targetMs' | 'siteId' | 'audience'>>): void;
   setLoadError(message: string): void;
@@ -80,6 +82,7 @@ export const useStore = create<State>((set, get) => ({
   missionActive: false,
   comparison: null,
   searching: false,
+  navigationVersion: 0,
 
   init: (data, initial) => {
     const windowDays = initial.windowDays ?? 30;
@@ -102,6 +105,8 @@ export const useStore = create<State>((set, get) => ({
       briefing: Object.keys(initial).length === 0,
       missionActive: false,
       comparison: null,
+      searching: false,
+      navigationVersion: get().navigationVersion + 1,
       moving: false,
       playing: false,
       motionDurationMs: DATE_TWEEN_MS,
@@ -132,11 +137,12 @@ export const useStore = create<State>((set, get) => ({
   stepDays: (days) => get().setDate(get().windowStartMs + days * DAY_MS),
 
   setMoment: (ms, glide = false) => {
+    if (!Number.isFinite(ms)) return;
     const { windowStartMs, windowDays } = get();
     const end = windowStartMs + windowDays * DAY_MS - STEP_MS;
     const moment = Math.min(end, Math.max(windowStartMs, ms));
-    if (glide && !prefersReducedMotion()) set({ targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: DATE_TWEEN_MS });
-    else set({ targetMs: moment, displayMs: moment, moving: false, motionDurationMs: DATE_TWEEN_MS });
+    if (glide && !prefersReducedMotion()) set({ targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: DATE_TWEEN_MS, playing: false });
+    else set({ targetMs: moment, displayMs: moment, moving: false, motionDurationMs: DATE_TWEEN_MS, playing: false });
   },
   setDisplay: (displayMs, moving) => set({ displayMs, moving }),
   setWindowDays: (windowDays) => {

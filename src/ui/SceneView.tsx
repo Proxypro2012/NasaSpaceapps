@@ -38,6 +38,7 @@ export function SceneView({ data, metrics }: Props) {
   const moving = useStore((s) => s.moving);
   const siteId = useStore((s) => s.siteId);
   const playing = useStore((s) => s.playing);
+  const briefing = useStore(s => s.briefing);
   const [moved, setMoved] = useState(false);
   const [assetError, setAssetError] = useState<string | null>(null);
 
@@ -112,13 +113,11 @@ export function SceneView({ data, metrics }: Props) {
       <div ref={grain} className="grain" aria-hidden="true" />
       <div ref={overlay} className="scene-overlay" />
       {assetError && <p className="scene-error" role="status">{assetError}</p>}
-      {moved && (
-        <div className="scene-tools">
-          <button type="button" className="pill pill-glass" onClick={() => scene.current?.focusSite(null)}>
+      {!briefing && <div className="scene-tools">
+          <button type="button" className="pill pill-glass" aria-pressed={!moved} onClick={() => scene.current?.focusSite(null)}>
             Whole Moon
           </button>
-        </div>
-      )}
+        </div>}
     </div>
   );
 }

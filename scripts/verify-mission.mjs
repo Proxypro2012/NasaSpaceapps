@@ -34,6 +34,9 @@ try {
     await slider.focus();
     await page.keyboard.press('ArrowRight');
     await expect(slider).toHaveAttribute('aria-valuetext', '4 Jan 2027, 12:30 UTC');
+    await expect(page.locator('.date-value')).toContainText('4 Jan 2027');
+    await expect(page.locator('.date-value')).toContainText('12:30');
+    await expect(page.locator('.window-range')).toContainText('1 Jan 2027 → 8 Jan 2027 UTC');
     await expect(page.getByLabel('Start date of the window (UTC)')).toHaveValue('2027-01-01');
     await page.locator('.mission-prompt .pill').click();
     await expect(page.locator('.mission-comparison')).toContainText('168 more hours together');
@@ -53,6 +56,18 @@ try {
     await page.getByRole('button', { name: 'Return to original window' }).click();
     await expect(page.getByLabel('Start date of the window (UTC)')).toHaveValue('2027-01-01');
     await expect(page.locator('.mission-comparison')).toHaveCount(0);
+    if (width === 375) {
+      await page.getByLabel('Scene moment (UTC)', { exact: true }).fill('2027-01-05T09:30');
+      await expect(page.locator('.date-value')).toContainText('5 Jan 2027');
+      await expect(page.locator('.date-value')).toContainText('09:30');
+      await expect(page.getByLabel('Start date of the window (UTC)')).toHaveValue('2027-01-01');
+      await page.getByRole('button', { name: 'Next scene day', exact: true }).click();
+      await expect(page.locator('.date-value')).toContainText('6 Jan 2027');
+      await page.getByRole('button', { name: 'Previous scene day', exact: true }).click();
+      await page.getByLabel('Start date of the window (UTC)').fill('2027-01-02');
+      await expect(page.locator('.window-range')).toContainText('2 Jan 2027 → 9 Jan 2027 UTC');
+      await expect(page.locator('.date-value')).toContainText('6 Jan 2027');
+    }
     if (width === 1280) {
       await page.locator('.mission-prompt .pill').click();
       await expect(page.locator('.mission-comparison')).toBeVisible();
@@ -64,11 +79,53 @@ try {
       await page.waitForFunction(() => document.querySelector('input[type="date"]').value !== '2027-01-10');
       await expect(page.locator('.mission-comparison')).toHaveCount(0);
       await page.getByRole('button', { name: 'Pause', exact: true }).click();
+      await page.getByRole('button', { name: 'Play the time-lapse' }).click();
+      await page.locator('.topbar-right > .pill').first().click();
+      await expect(page.getByRole('button', { name: 'Play the time-lapse' })).toBeVisible();
+      await expect(page.locator('.mission-comparison')).toBeVisible();
     }
     assert.deepEqual(errors, []);
     report.viewports.push({ width, passed: true, checks: 'mission, canvas resize, linked terrain/cursor, comparison, keyboard dialog, restore; playback at 1280' });
     await context.close();
   }
+  const navigation = await browser.newContext({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
+  const nav = await navigation.newPage();
+  const initial = '#date=2026-11-15&days=30&at=2026-11-15T12%3A00Z&site=connecting-ridge&view=planner';
+  const shared = '#date=2027-01-01&days=7&at=2027-01-03T12%3A30Z&site=malapert-massif&view=educator';
+  await nav.goto(base + '/' + initial);
+  await expect(nav.locator('.card')).toBeVisible();
+  const totals = await nav.locator('.metrics').innerText();
+  await nav.getByRole('button', { name: 'More options' }).click();
+  await nav.getByRole('button', { name: 'Calendar of best days' }).click();
+  await nav.locator('.calendar-cell[aria-label*="Connecting Ridge, 30 Nov 2026"]').click();
+  await expect(nav.locator('.date-value')).toContainText('30 Nov 2026');
+  await expect(nav.getByLabel('Start date of the window (UTC)')).toHaveValue('2026-11-15');
+  await expect(nav.locator('.metrics')).toHaveText(totals, { useInnerText: true });
+  await expect(nav.locator('.window-range')).toContainText('15 Nov 2026 → 15 Dec 2026 UTC');
+  await nav.evaluate(hash => {
+    window.__navigationSentinel = 'no reload';
+    document.querySelector('.topbar-right > .pill').click();
+    location.hash = hash;
+  }, shared);
+  await expect(nav.getByLabel('Start date of the window (UTC)')).toHaveValue('2027-01-01');
+  await expect(nav.locator('.date-value')).toContainText('3 Jan 2027');
+  await expect(nav.locator('.date-value')).toContainText('12:30');
+  await expect(nav.locator('.card-head h1')).toHaveText('Malapert Massif');
+  await expect(nav.locator('.app')).toHaveAttribute('data-audience', 'educator');
+  await expect(nav.locator('.mission-comparison')).toHaveCount(0);
+  assert.equal(await nav.evaluate(() => window.__navigationSentinel), 'no reload');
+  await nav.goBack();
+  await expect(nav.getByLabel('Start date of the window (UTC)')).toHaveValue('2026-11-15');
+  await expect(nav.locator('.date-value')).toContainText('30 Nov 2026');
+  await nav.goForward();
+  await expect(nav.locator('.card-head h1')).toHaveText('Malapert Massif');
+  const fresh = await navigation.newPage();
+  await fresh.goto(base + '/' + shared);
+  await expect(fresh.locator('.date-value')).toHaveText(await nav.locator('.date-value').innerText());
+  await expect(fresh.locator('.window-range')).toHaveText(await nav.locator('.window-range').innerText());
+  await expect(fresh.locator('.app')).toHaveAttribute('data-audience', 'educator');
+  report.navigation = 'Calendar moment/window distinction, same-tab hash, back/forward and fresh-link restoration passed';
+  await navigation.close();
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
   await page.goto(`${base}/?guide=1`);
@@ -85,6 +142,21 @@ try {
   assert.equal(media.captions, 1);
   report.media = media;
   await context.close();
+
+  const bootNavigation = await browser.newContext();
+  let releaseBoot;
+  let sawRequest;
+  const held = new Promise(resolve => { releaseBoot = resolve; });
+  const intercepted = new Promise(resolve => { sawRequest = resolve; });
+  await bootNavigation.route('**/data/ephemeris.bin', async route => { sawRequest(); await held; await route.continue(); });
+  const bootPage = await bootNavigation.newPage();
+  await bootPage.goto(base + '/' + shared, { waitUntil: 'domcontentloaded' });
+  await intercepted;
+  await bootPage.evaluate(() => { location.hash = ''; });
+  releaseBoot();
+  await expect(bootPage.getByRole('button', { name: 'Try a mission', exact: true })).toBeVisible();
+  await expect(bootPage.getByRole('button', { name: 'Try a mission', exact: true })).toBeEnabled();
+  await bootNavigation.close();
 
   const failed = await browser.newContext();
   await failed.route('**/data/ephemeris.bin', route => route.fulfill({ status: 503, body: 'Unavailable' }));

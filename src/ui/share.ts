@@ -28,12 +28,14 @@ export function encodeLink(s: LinkState): string {
 export function decodeLink(hash: string): Partial<LinkState> {
   const p = new URLSearchParams(hash.replace(/^#/, ''));
   const out: Partial<LinkState> = {};
-  const date = Date.parse(`${p.get('date')}T00:00:00Z`);
-  if (Number.isFinite(date)) out.windowStartMs = date;
+  const day = p.get('date') ?? '';
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(day) ? Date.parse(`${day}T00:00:00Z`) : NaN;
+  if (Number.isFinite(date) && isoDay(date) === day) out.windowStartMs = date;
   const days = Number(p.get('days'));
   if ((WINDOW_OPTIONS as readonly number[]).includes(days)) out.windowDays = days;
-  const at = Date.parse(p.get('at') ?? '');
-  if (Number.isFinite(at)) out.targetMs = at;
+  const moment = p.get('at') ?? '';
+  const at = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?Z$/.test(moment) ? Date.parse(moment) : NaN;
+  if (Number.isFinite(at) && isoMinute(at).slice(0, 16) === moment.slice(0, 16)) out.targetMs = at;
   else if (out.windowStartMs !== undefined) out.targetMs = out.windowStartMs + (Date.now() % DAY_MS);
   const site = p.get('site');
   if (site) out.siteId = site;

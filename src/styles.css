@@ -438,6 +438,15 @@ button {
   outline: 2px solid var(--sea-glass);
   outline-offset: 3px;
 }
+.scene-clock { flex-direction: column; align-items: center; gap: 0; padding: 4px 12px; }
+.scene-clock-label { font-size: 12px; color: var(--sea-glass); }
+.scene-clock-time { font-size: 13px; font-weight: 500; margin-left: 4px; }
+.round:disabled { cursor: default; opacity: 0.45; }
+.assessment-window { display: flex; flex-direction: column; gap: 8px; padding-block: 12px; border-block: 1px solid var(--line); }
+.window-range { font-size: 13px; font-variant-numeric: tabular-nums; }
+.window-start-control { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
+.window-start-control input { min-height: 36px; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; color: var(--cream); background: var(--navy); font: inherit; }
+.window-help { font-size: 12px; opacity: 0.8; }
 .topbar-right {
   display: flex;
   align-items: center;
@@ -1220,7 +1229,7 @@ table.data th {
     min-height: 460px;
   }
   .app[data-briefing='true'] .scene { height: max(820px, 100svh); }
-  .mission-briefing { top: 200px; left: 20px; right: 20px; width: auto; max-width: 520px; }
+  .mission-briefing { top: 216px; left: 20px; right: 20px; width: auto; max-width: 520px; }
   .mission-briefing h1 { font-size: 36px; }
   .topbar {
     flex-wrap: wrap;
