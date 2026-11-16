@@ -16,7 +16,8 @@ export function duration(hours: number): string {
   if (hours < 0.25) return 'none';
   if (hours < 48) return `${hours % 1 === 0 ? hours : hours.toFixed(1)} h`;
   const days = hours / 24;
-  return `${days >= 10 ? Math.round(days) : days.toFixed(1)} days`;
+  // Number() drops a trailing ".0", so a whole week reads "7 days", not "7.0 days".
+  return `${days >= 10 ? Math.round(days) : Number(days.toFixed(1))} days`;
 }
 
 export const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];

@@ -78,8 +78,17 @@ are our sunlight thresholds, not NASA standards. All times are UTC.
 
 ## Credits and AI use
 
-Claude (Anthropic) and Codex (OpenAI) assisted with writing, debugging, testing
-and reviewing the code. Screenshots and the walkthrough capture the running app.
+The team chose the challenge, set the goals and design direction, and directed
+the work. Claude (Anthropic), through Claude Code, and Codex (OpenAI) generated
+and revised substantial portions of the code, tests, documentation and
+data-processing scripts under that direction, and assisted with debugging,
+research and review. Prepared data files are numerical transformations of the
+cited NASA/JPL source datasets; the displayed numbers are deterministic
+calculations, not AI predictions. Screenshots and the walkthrough capture the
+running app, and Moon textures come from NASA's CGI Moon Kit.
+Earthrise (https://github.com/Abulkosim/earthrise) inspired the site comparison,
+longest Earth-gap readout and guided month playback; its results are not used
+as Southlight validation evidence.
 The sky shader, palette and visual style were adapted from Voca, the team's
 earlier project. Instrument Serif is licensed under the SIL Open Font License.
 NASA data sources and software credits appear in the app's reference list.

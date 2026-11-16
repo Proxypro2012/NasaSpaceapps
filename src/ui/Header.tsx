@@ -4,6 +4,7 @@ import { AUDIENCES, WINDOW_OPTIONS, useStore } from '../state/store';
 import { BestWindowButton } from './Mission';
 import { launchMission } from './actions';
 import { SceneClock } from './SceneClock';
+import { MonthTourControl } from './MonthTour';
 import { useEscape } from './hooks';
 
 const AUDIENCE_LABEL = { planner: 'Planner', educator: 'Educator', public: 'Public' } as const;
@@ -43,6 +44,7 @@ export function Header({ data }: { data: AppData }) {
       <SceneClock />
 
       <div className="topbar-right">
+        <MonthTourControl />
         <BestWindowButton data={data} />
         <button type="button" className="pill pill-glass" onClick={() => setPanel('trust')}>
           How we know

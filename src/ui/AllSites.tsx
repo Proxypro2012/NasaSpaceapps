@@ -24,7 +24,8 @@ export function AllSites({ data, metrics, verdicts }: { data: AppData; metrics: 
   return (
     <section className="all-sites" aria-labelledby="all-sites-title">
       <div className="all-sites-heading">
-        <h2 id="all-sites-title">All sites</h2><span aria-hidden="true">Sunlight</span><span aria-hidden="true">Earth link</span>
+        <div className="all-sites-label"><h2 id="all-sites-title">All sites</h2><button type="button" className="link" onClick={() => useStore.getState().setPanel('calendar')}>Compare sites</button></div>
+        <span aria-hidden="true">Sunlight</span><span aria-hidden="true">Earth link</span>
       </div>
       {data.sites.map(site => <SiteRow key={site.id} site={site} metrics={metrics[site.id]}
         verdict={verdicts[site.id] ?? metrics[site.id].verdict} selected={site.id === siteId} />)}

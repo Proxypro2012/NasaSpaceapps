@@ -18,7 +18,7 @@ export function WindowRange({ data }: { data: AppData }) {
             if (Number.isFinite(value)) useStore.getState().setDate(value);
           }} />
       </label>
-      <p className="window-help">Totals cover this full interval. The scene clock and calendar inspect a moment inside it.</p>
+      <p className="window-help">Totals cover the window. Scene time inspects one moment.</p>
     </section>
   );
 }

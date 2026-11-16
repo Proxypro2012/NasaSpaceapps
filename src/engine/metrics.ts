@@ -47,12 +47,16 @@ export function windowMetrics(eph: Ephemeris, site: Site, startMs: number, days:
   let both = 0;
   let run = 0;
   let longest = 0;
+  let earthGap = 0;
+  let longestEarthGap = 0;
   for (let i = 0; i < steps; i++) {
     skyAt(eph, site, startMs + i * STEP_MS, scratch);
     const s = scratch.sun.frac >= VISIBLE_THRESHOLD;
     const e = scratch.earth.frac >= VISIBLE_THRESHOLD;
     if (s) sunUp++;
     if (e) earthUp++;
+    earthGap = e ? 0 : earthGap + 1;
+    if (earthGap > longestEarthGap) longestEarthGap = earthGap;
     if (s && e) both++;
     if (scratch.sun.frac <= DARK_EPSILON) {
       run++;
@@ -67,12 +71,14 @@ export function windowMetrics(eph: Ephemeris, site: Site, startMs: number, days:
     sunlightPct,
     longestDarkHours,
     earthLinkPct: (100 * earthUp) / steps,
+    longestEarthGapHours: (longestEarthGap * STEP_MINUTES) / 60,
     combinedPct: (100 * both) / steps,
     verdict,
     resolution: comparison ? {
       sunlightPct: comparison.sunlightPct,
       longestDarkHours: comparison.longestDarkHours,
       earthLinkPct: comparison.earthLinkPct,
+      longestEarthGapHours: comparison.longestEarthGapHours,
       combinedPct: comparison.combinedPct,
       verdict: comparison.verdict,
       sensitive: comparison.verdict !== verdict,

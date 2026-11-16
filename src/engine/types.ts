@@ -81,12 +81,15 @@ export interface WindowMetrics {
   sunlightPct: number;
   longestDarkHours: number;
   earthLinkPct: number;
+  /** Longest window-clipped run below the half-disc Earth visibility threshold. */
+  longestEarthGapHours: number;
   combinedPct: number;
   verdict: Verdict;
   resolution?: {
     sunlightPct: number;
     longestDarkHours: number;
     earthLinkPct: number;
+    longestEarthGapHours: number;
     combinedPct: number;
     verdict: Verdict;
     sensitive: boolean;

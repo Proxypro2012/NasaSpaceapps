@@ -12,6 +12,7 @@ export function SceneClock() {
   const targetMs = useStore(s => s.targetMs);
   const displayMs = useStore(s => s.displayMs);
   const moving = useStore(s => s.moving);
+  const tourPlaying = useStore(s => s.monthTour?.status === 'playing');
   const endMs = startMs + days * DAY_MS - STEP_MS;
   const input = useRef<HTMLInputElement>(null);
   const drag = useRef<{ x: number; ms: number; moved: boolean } | null>(null);
@@ -40,7 +41,7 @@ export function SceneClock() {
           if (d && !d.moved) input.current?.showPicker?.();
         }}
         onPointerCancel={() => { drag.current = null; }}>
-        <span className="scene-clock-label">Scene time · UTC{moving ? ' · travelling' : ''}</span>
+        <span className="scene-clock-label">Scene time · UTC{moving ? ' · travelling' : tourPlaying ? ' · lunar month' : ''}</span>
         <span className="date-value">{fmtDate.format(displayMs)} <span className="scene-clock-time">{fmtTime.format(displayMs)}</span></span>
         <input ref={input} type="datetime-local" aria-label="Scene moment (UTC)" step={1800} disabled={moving} onFocus={() => useStore.getState().setPlaying(false)}
           min={isoMinute(startMs).slice(0, 16)} max={isoMinute(endMs).slice(0, 16)} value={isoMinute(targetMs).slice(0, 16)}

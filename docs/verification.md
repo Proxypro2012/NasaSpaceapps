@@ -119,11 +119,39 @@ score 100 for accessibility, best practices and SEO on desktop and mobile.
 The final independent code review reports no actionable regressions; its sandbox
 could not launch Chrome, so all browser checks were run in the main session.
 
+## Site comparison, Earth gap and month playback
+
+The engine gains one metric, the longest Earth visibility gap: the longest run
+of 30-minute samples with less than half of Earth's disc above terrain, clipped
+to the window. It uses the same threshold as Earth visibility and mirrors the
+longest-dark loop. The Python reference (`tools/lunar/metrics.py`) computes it
+independently from SPICE. Rerunning `tools/build_golden.py` reproduces the
+committed fixture byte for byte, and the TypeScript engine matches all 18
+reference windows within 0.5 h. Spot values (7-day windows, UTC):
+
+| Start | Connecting Ridge | Malapert Massif | Nobile Rim 1 |
+| --- | --- | --- | --- |
+| 1 Jan 2027 | 168 h (Earth 0%) | none (Earth 100%) | 168 h (Earth 0%) |
+| 10 Jan 2027 | none (Earth 100%) | none (Earth 100%) | 10 h (Earth 94%) |
+
+Unit tests cover the threshold boundary, clipping at both window edges, gaps
+across midnight, and fully visible or hidden windows.
+
+`npm run verify:comparison` passes at 375, 768 and 1280 px against the
+production build: side-by-side table values on both dates, Sun/Earth/Both
+calendar layers, CSV export, site selection from the table, and the guided
+month (play, pause without drift, resume, replay, fixed totals, cancel on
+navigation, reduced-motion cut). It now also fails if the comparison table is
+clipped vertically; that bug (four of six rows hidden at desktop width) was
+found by eye and fixed. Durations of whole days now read "7 days", not
+"7.0 days". `verify:all-sites` and `verify:browser` still pass.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run
 `npm run verify:browser`. To check production, set
 `APP_URL=https://southlight-tau.vercel.app` for the browser verification command.
 `npm run verify:all-sites` reproduces the strip checks.
+`npm run verify:comparison` reproduces the comparison, Earth-gap and month checks.
 `node scripts/audit-mission.mjs` runs real-Chrome desktop/mobile Lighthouse audits.
 Browser artifacts are written to the ignored `.playwright-mcp/` folder.

@@ -109,6 +109,7 @@ def summarise(sun_frac: np.ndarray, earth_frac: np.ndarray, step_minutes: float 
         "sunlight_pct": float(sunlight),
         "longest_dark_hours": float(dark),
         "earth_link_pct": float(100.0 * earth_up.mean()),
+        "longest_earth_gap_hours": longest_run_hours(~earth_up, step_minutes),
         "combined_pct": float(100.0 * (sun_up & earth_up).mean()),
         "verdict": verdict(sunlight, dark),
     }

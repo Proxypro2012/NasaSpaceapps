@@ -61,6 +61,7 @@ export function MissionComparison() {
     ['Earth in view', pct(before.earthLinkPct), pct(after.earthLinkPct)],
     ['Both together', pct(before.combinedPct), pct(after.combinedPct)],
     ['Longest dark', duration(before.longestDarkHours), duration(after.longestDarkHours)],
+    ['Longest Earth gap', duration(before.longestEarthGapHours), duration(after.longestEarthGapHours)],
   ];
   return (
     <section className="mission-comparison" aria-labelledby="comparison-title">

@@ -454,6 +454,8 @@ button {
   gap: 10px;
   flex: 1 1 0;
 }
+.month-tour-control { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.month-tour-status { font-size: 12px; white-space: nowrap; color: var(--sea-glass); }
 
 .menu-wrap {
   position: relative;
@@ -539,7 +541,9 @@ button {
 .all-sites { display: flex; flex-direction: column; gap: 4px; }
 .all-sites-heading, .site-row { display: grid; grid-template-columns: 8px minmax(0, 1fr) 36px 48px 52px; align-items: center; gap: 8px; padding-inline: 8px; }
 .all-sites-heading { font-size: 12px; color: var(--cream); }
-.all-sites-heading h2 { grid-column: 1 / 4; font: 500 13px var(--sans); }
+.all-sites-label { grid-column: 1 / 4; display: flex; align-items: center; gap: 8px; }
+.all-sites-heading h2 { font: 500 13px var(--sans); white-space: nowrap; }
+.all-sites-label .link { font-size: 12px; min-height: 24px; }
 .all-sites-heading > span { text-align: right; opacity: 0.72; }
 .site-row { width: 100%; min-height: 40px; border-radius: 8px; text-align: left; font-size: 13px; color: var(--cream); }
 .site-row:hover, .site-row[aria-pressed='true'] { background: rgb(124 200 184 / 0.12); }
@@ -592,13 +596,14 @@ button {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
   margin: 0;
   padding: 8px 0;
   border-block: 1px solid var(--line);
 }
 .metrics dt {
+  min-height: 2.9em;
   font-size: 12.5px;
   font-weight: 500;
   opacity: 0.72;
@@ -790,6 +795,18 @@ button {
 }
 
 /* ---------- calendar heatmap (flat, crisp) ---------- */
+
+.comparison-window { font-size: 14px; font-variant-numeric: tabular-nums; }
+/* flex: none stops the sheet's flex column from squashing the table to a sliver; it scrolls sideways only. */
+.site-comparison-scroll { flex: none; overflow-x: auto; overflow-y: hidden; }
+.site-comparison-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.site-comparison-table th, .site-comparison-table td { padding: 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.site-comparison-table th:first-child { text-align: left; font-weight: 500; font-size: 12px; }
+.site-comparison-table thead th { width: 24%; }
+.site-comparison-table thead .link { font-size: 14px; }
+.site-comparison-table [data-selected='true'] { background: rgb(124 200 184 / 0.12); }
+.comparison-definitions { font-size: 12px; line-height: 1.5; opacity: 0.85; }
+.calendar-layers { align-self: flex-start; margin-bottom: 12px; }
 
 .calendar-head {
   display: grid;
@@ -1317,9 +1334,10 @@ table.data th {
 
 @media (max-width: 520px) {
   .metrics {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
+  .metrics dt { min-height: 0; }
   .numeral {
     font-size: 28px;
   }

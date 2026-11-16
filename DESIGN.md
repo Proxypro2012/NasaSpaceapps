@@ -56,6 +56,36 @@ clearance if needed; controls must remain reachable at 375, 390 and 768px.
   readout line height; objective and hint span both columns. Keep every word and
   action visible while the complete default mission card fits at 1280×800.
 
+## Comparing sites, Earth gaps and guided playback
+- The existing calendar sheet gains a semantic table with one column per site,
+  using the current shared assessment window. Show verdict, sunlight, longest
+  full darkness, Earth visibility, longest Earth gap and both-in-view time.
+  Reuse 12/14px table text, 8px cells and the current --line dividers. At phone
+  widths the table and heatmap scroll within a labeled region, with a 560px
+  content width; the page itself must not overflow. Keep all three sites.
+- A quiet Compare sites link sits beside the All sites title, with a 24px
+  minimum target within the existing compact heading. Sunlight / Earth / Both
+  segmented buttons switch only the heatmap's existing daily data. The
+  selected site has the same sea-glass tint as its strip row. Selecting a site
+  or calendar day selects its pin and returns to the scene.
+- Longest Earth gap is a window-clipped run of samples below the same half-disc
+  visibility threshold as Earth %. Show it alongside the three existing metrics,
+  in four desktop columns and two phone columns; use short supporting labels,
+  8px gaps/padding, and aligned two-line desktop headings. It is a geometric
+  visibility gap, not a prediction of radio silence. Keep the All sites strip
+  compact; full gaps and terrain comparison belong in the comparison/details.
+- The header has a glass Play a lunar month pill, becoming Pause lunar month,
+  Resume lunar month or Replay lunar month. A 12px status sits below the control.
+  It prepares a 30-day window and traverses its moments over 20 seconds with the
+  existing quintic easing, then stops at the final 30-minute sample. Totals stay
+  fixed while the scene, clock, cursor and skyline advance. Begin in Whole Moon
+  framing. Opening a sheet pauses; date/moment edits and navigation cancel the
+  tour. Reduced motion shows the final moment immediately with an explanation.
+  Preserve ordinary date travel and the existing public rolling time-lapse.
+- Keep the visible assessment-window help concise: window totals versus scene
+  inspection remain explicit. Reuse the existing panel surfaces, tokens, focus
+  treatment and modal focus trap; do not add a new visual theme.
+
 ## 6. Motion
 Date travel starts at rest, accelerates and decelerates without overshoot. Use a
 quintic smoothstep (zero speed and acceleration at both ends). Ordinary travel

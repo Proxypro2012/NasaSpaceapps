@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { AppData } from '../engine/load';
 import { DAY_MS, startOfUtcDay } from '../engine/metrics';
-import type { DayCell, Site } from '../engine/types';
+import type { DayCell, Site, WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
 import { BestWindowButton } from './Mission';
-import { fmtDate, fmtDayMonth, pct } from './format';
+import { duration, fmtDate, fmtDayMonth, pct } from './format';
 import { useCalendar, useEscape } from './hooks';
 
 interface Props {
@@ -12,8 +12,12 @@ interface Props {
   cells: Record<string, DayCell[]>;
   selectedSite: string;
   momentMs: number;
+  metric?: CalendarMetric;
   onPick(siteId: string, dayMs: number): void;
 }
+
+type CalendarMetric = 'sunlightPct' | 'earthLinkPct' | 'combinedPct';
+const METRIC_LABEL: Record<CalendarMetric, string> = { sunlightPct: 'Sunlight', earthLinkPct: 'Earth visibility', combinedPct: 'Sun and Earth together' };
 
 // One hue family, dark to light, so more light on the screen means more of the day is usable.
 const RAMP: [number, number, number][] = [
@@ -33,7 +37,7 @@ export function rampColor(share: number): string {
 }
 
 /** Every site by every day of the window: the share of each day with both the Sun and Earth in view. */
-export function Calendar({ sites, cells, selectedSite, momentMs, onPick }: Props) {
+export function Calendar({ sites, cells, selectedSite, momentMs, metric = 'combinedPct', onPick }: Props) {
   const [hover, setHover] = useState<{ site: Site; cell: DayCell } | null>(null);
   const days = cells[sites[0].id];
   const momentDay = startOfUtcDay(momentMs);
@@ -52,7 +56,7 @@ export function Calendar({ sites, cells, selectedSite, momentMs, onPick }: Props
               {pct(hover.cell.combinedPct)}
             </>
           ) : (
-            'Each square is one day. Brighter means more of that day has both sunlight and a line of sight to Earth.'
+            `Each square is one day. Brighter means more ${METRIC_LABEL[metric].toLowerCase()} during that day.`
           )}
         </p>
         <div className="ramp-key" aria-hidden="true">
@@ -82,9 +86,9 @@ export function Calendar({ sites, cells, selectedSite, momentMs, onPick }: Props
                 key={cell.dayMs}
                 type="button"
                 className="calendar-cell"
-                style={{ background: rampColor(cell.combinedPct / 100) }}
+                style={{ background: rampColor(cell[metric] / 100) }}
                 data-current={site.id === selectedSite && cell.dayMs === momentDay}
-                aria-label={`${site.name}, ${fmtDate.format(cell.dayMs)}: Sun and Earth together ${pct(cell.combinedPct)} of the day`}
+                aria-label={`${site.name}, ${fmtDate.format(cell.dayMs)}: ${METRIC_LABEL[metric]} ${pct(cell[metric])} of the day`}
                 onPointerEnter={() => setHover({ site, cell })}
                 onPointerLeave={() => setHover(null)}
                 onFocus={() => setHover({ site, cell })}
@@ -100,8 +104,12 @@ export function Calendar({ sites, cells, selectedSite, momentMs, onPick }: Props
 }
 
 /** The calendar on its own screen. Picking a day sets the site and the moment, then returns to the Moon. */
-export function CalendarSheet({ data }: { data: AppData }) {
-  const { windowStartMs, windowDays, siteId, targetMs } = useStore();
+export function CalendarSheet({ data, metrics }: { data: AppData; metrics: Record<string, WindowMetrics> }) {
+  const windowStartMs = useStore(s => s.windowStartMs);
+  const windowDays = useStore(s => s.windowDays);
+  const siteId = useStore(s => s.siteId);
+  const targetMs = useStore(s => s.targetMs);
+  const [metric, setMetric] = useState<CalendarMetric>('combinedPct');
   const cells = useCalendar(data, windowStartMs, windowDays);
   const close = () => useStore.getState().setPanel('none');
   useEscape(close);
@@ -112,24 +120,46 @@ export function CalendarSheet({ data }: { data: AppData }) {
         className="sheet sheet-wide"
         role="dialog"
         aria-modal="true"
-        aria-label="Calendar of best days"
+        aria-labelledby="site-comparison-title"
         onClick={(e) => e.stopPropagation()}
       >
         <header className="sheet-head">
-          <h1>Best days at a glance</h1>
+          <h1 id="site-comparison-title">Compare sites and days</h1>
           <button type="button" className="round round-x" aria-label="Close" onClick={close} autoFocus>
             ✕
           </button>
         </header>
         <div className="sheet-body">
+          <p className="comparison-window"><strong>{windowDays}-day assessment window</strong> · {fmtDate.format(windowStartMs)} → {fmtDate.format(windowStartMs + windowDays * DAY_MS)} UTC</p>
+          <div className="site-comparison-scroll" role="region" aria-label="Side-by-side site metrics; scroll horizontally on small screens" tabIndex={0}>
+            <table className="site-comparison-table">
+              <caption className="sr-only">All sites assessed for the same {windowDays}-day window</caption>
+              <thead><tr><td /><>{data.sites.map(site => <th scope="col" key={site.id} data-selected={site.id === siteId}>
+                <button type="button" className="link" aria-pressed={site.id === siteId} onClick={() => { useStore.getState().setSite(site.id, true); close(); }}>{site.name}</button>
+              </th>)}</></tr></thead>
+              <tbody>{([
+                ['Sunlight verdict', (m: WindowMetrics) => m.verdict],
+                ['Sunlight', (m: WindowMetrics) => pct(m.sunlightPct)],
+                ['Longest dark', (m: WindowMetrics) => duration(m.longestDarkHours)],
+                ['Earth in view', (m: WindowMetrics) => pct(m.earthLinkPct)],
+                ['Longest Earth gap', (m: WindowMetrics) => duration(m.longestEarthGapHours)],
+                ['Both together', (m: WindowMetrics) => pct(m.combinedPct)],
+              ] as const).map(([label, format]) => <tr key={label}><th scope="row">{label}</th>{data.sites.map(site => <td key={site.id} data-site={site.id} data-selected={site.id === siteId}>{format(metrics[site.id])}</td>)}</tr>)}</tbody>
+            </table>
+          </div>
+          <p className="comparison-definitions">Verdicts describe sunlight. Earth gaps are consecutive samples with less than half of Earth above terrain, clipped to this window; they do not predict radio service. Durations use 30-minute samples. Select a site heading to inspect it.</p>
+          <div className="segmented calendar-layers" role="radiogroup" aria-label="Daily visibility layer">
+            {(['sunlightPct', 'earthLinkPct', 'combinedPct'] as const).map(key => <button type="button" role="radio" key={key} aria-checked={metric === key} onClick={() => setMetric(key)}>{key === 'sunlightPct' ? 'Sunlight' : key === 'earthLinkPct' ? 'Earth' : 'Both'}</button>)}
+          </div>
           <p className="muted">Inspect a day within the current assessment window. Selecting a square changes the scene time; the window totals keep the same date range.</p>
           <Calendar
             sites={data.sites}
             cells={cells}
             selectedSite={siteId}
             momentMs={targetMs}
+            metric={metric}
             onPick={(id, ms) => {
-              useStore.getState().setSite(id);
+              useStore.getState().setSite(id, true);
               useStore.getState().setMoment(ms, true);
               close();
             }}

@@ -49,7 +49,7 @@ await at(12);
 await page.getByRole('button', { name: 'Whole Moon', exact: true }).click();
 await page.waitForFunction(() => document.querySelector('.scene-tools button')?.getAttribute('aria-pressed') === 'true');
 await at(13.5);
-await page.locator('.topbar-right > .pill').first().click();
+await page.locator('.topbar-right').getByRole('button', { name: 'Find a better window', exact: true }).click();
 await caption('Find a better window. The scene accelerates\nthrough real dates, then slows at the recommendation.');
 await at(19);
 await caption('Start nine days later: both are visible for 100%\nof the sampled window. The original stays beside it.');

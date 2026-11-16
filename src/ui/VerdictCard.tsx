@@ -46,6 +46,7 @@ export function ResolutionNote({ metrics }: { metrics: WindowMetrics }) {
       <p>
         The 40 m map gives {pct(metrics.sunlightPct)} sunlight and {metrics.verdict} conditions.
         The 80 m comparison gives {pct(other.sunlightPct)} and {other.verdict}, with {duration(other.longestDarkHours)} of full darkness.
+        {' '}The longest Earth gap is {duration(metrics.longestEarthGapHours)} at 40 m and {duration(other.longestEarthGapHours)} at 80 m, within this window.
         {other.sensitive ? ' Terrain detail changes this verdict; treat it as uncertain.' : ' Both maps give the same verdict for this window.'}
         {' '}This comparison is a sensitivity check, not an error bound.
       </p>
@@ -57,7 +58,6 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
   const siteId = useStore(s => s.siteId);
   const windowStartMs = useStore(s => s.windowStartMs);
   const windowDays = useStore(s => s.windowDays);
-  const targetMs = useStore(s => s.targetMs);
   const audience = useStore(s => s.audience);
   const playing = useStore(s => s.playing);
   const comparison = useStore(s => s.comparison);
@@ -69,6 +69,7 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
   const noDark = m.longestDarkHours < 0.25;
 
   const share = async () => {
+    const targetMs = useStore.getState().targetMs;
     const url = `${location.origin}${location.pathname}${encodeLink({ windowStartMs, windowDays, targetMs, siteId, audience })}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -102,7 +103,7 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
             <dt>Longest dark</dt>
             <dd>
               <Numeral value={m.longestDarkHours} format={duration} />
-              <p>{noDark ? 'no full darkness in this window' : 'without direct sunlight'}</p>
+              <p>{noDark ? 'no full darkness' : 'without sunlight'}</p>
             </dd>
           </div>
           <div>
@@ -110,6 +111,13 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
             <dd>
               <Numeral value={m.earthLinkPct} format={pct} />
               <p>line of sight</p>
+            </dd>
+          </div>
+          <div>
+            <dt>Longest Earth gap</dt>
+            <dd>
+              <Numeral value={m.longestEarthGapHours} format={duration} />
+              <p>below half in view</p>
             </dd>
           </div>
         </dl>
@@ -124,6 +132,7 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
           </p>
           <p>
             At least half of Earth would clear the skyline for <strong>{pct(m.earthLinkPct)}</strong> of the time.
+            {' '}The longest gap below that threshold is <strong>{duration(m.longestEarthGapHours)}</strong> within this window.
             A working radio link also depends on the antenna and radio system.
           </p>
         </div>
@@ -142,6 +151,7 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
           <p>
             Sunlight {pct(m.sunlightPct)} of the time, and Earth in view {pct(m.earthLinkPct)} of the time, over the next {windowDays}{' '}
             days.
+            {' '}The longest Earth visibility gap in this window is {duration(m.longestEarthGapHours)}.
           </p>
           <button type="button" className="pill" onClick={() => setPlaying(!playing)}>
             {playing ? 'Pause' : 'Play the time-lapse'}

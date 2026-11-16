@@ -120,7 +120,7 @@ function Loaded() {
         </div>
       )}
       {data && panel === 'trust' && <TrustPanel data={data} />}
-      {data && panel === 'calendar' && <CalendarSheet data={data} />}
+      {data && panel === 'calendar' && <CalendarSheet data={data} metrics={metrics} />}
       {data && panel === 'dive' && (
         <ViewBoundary fallback={<SiteViewStatus failed />}>
           <Suspense fallback={<SiteViewStatus />}>

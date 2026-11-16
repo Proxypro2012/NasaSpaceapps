@@ -1,5 +1,5 @@
-import { DAY_MS, startOfUtcDay } from '../engine/metrics';
-import { dateLimits, useStore } from './store';
+import { DAY_MS, STEP_MS, startOfUtcDay } from '../engine/metrics';
+import { MONTH_TOUR_MS, dateLimits, useStore } from './store';
 
 /** Solves a CSS-style cubic-bezier easing curve for x in 0..1. */
 export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (x: number) => number {
@@ -48,6 +48,10 @@ export function startDateMotion(): () => void {
   let durationMs = 0;
   let lastPlay = 0;
   let wasMoving = false;
+  let lastTour: number | null = null;
+  const unsubscribe = useStore.subscribe((s, previous) => {
+    if (s.monthTour?.status !== previous.monthTour?.status) lastTour = null;
+  });
 
   const frame = () => {
     // A queued RAF timestamp can predate a synchronous best-window search.
@@ -56,6 +60,21 @@ export function startDateMotion(): () => void {
     raf = requestAnimationFrame(frame);
     const s = useStore.getState();
     if (!s.data) return;
+
+    if (s.monthTour?.status === 'playing') {
+      const dt = lastTour === null ? 0 : Math.max(0, Math.min(100, now - lastTour));
+      lastTour = now;
+      lastPlay = 0;
+      wasMoving = false;
+      const elapsedMs = Math.min(MONTH_TOUR_MS, s.monthTour.elapsedMs + dt);
+      const progress = elapsedMs / MONTH_TOUR_MS;
+      const end = s.windowStartMs + s.windowDays * DAY_MS - STEP_MS;
+      const moment = s.windowStartMs + (end - s.windowStartMs) * dateEase(progress);
+      useStore.setState({ displayMs: moment, targetMs: moment,
+        monthTour: { status: progress >= 1 ? 'complete' : 'playing', elapsedMs } });
+      return;
+    }
+    lastTour = null;
 
     // Time-lapse for the Public view: one day of Moon time every second.
     if (s.playing) {
@@ -92,5 +111,5 @@ export function startDateMotion(): () => void {
     else s.setDisplay(fromMs + (toMs - fromMs) * dateEase(p), true);
   };
   raf = requestAnimationFrame(frame);
-  return () => cancelAnimationFrame(raf);
+  return () => { cancelAnimationFrame(raf); unsubscribe(); };
 }

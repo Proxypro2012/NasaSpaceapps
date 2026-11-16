@@ -63,6 +63,7 @@ describe('engine against the SPICE reference', () => {
       expect(Math.abs(m.earthLinkPct - w.earth_link_pct)).toBeLessThanOrEqual(oneStep + 1e-9);
       expect(Math.abs(m.combinedPct - w.combined_pct)).toBeLessThanOrEqual(oneStep + 1e-9);
       expect(Math.abs(m.longestDarkHours - w.longest_dark_hours)).toBeLessThanOrEqual(0.5);
+      expect(Math.abs(m.longestEarthGapHours - w.longest_earth_gap_hours)).toBeLessThanOrEqual(0.5);
       expect(m.verdict).toBe(w.verdict);
     }
   });

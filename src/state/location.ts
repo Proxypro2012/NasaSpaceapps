@@ -8,7 +8,7 @@ export function startLocationSync(): () => void {
 
   const write = () => {
     const s = useStore.getState();
-    if (applying || !s.data || s.moving || s.playing) return;
+    if (applying || !s.data || s.moving || s.playing || s.monthTour?.status === 'playing') return;
     // A hash change can precede its queued browser event. Do not overwrite it.
     if (location.hash !== seenHash) return;
     const hash = encodeLink(s);

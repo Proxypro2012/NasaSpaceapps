@@ -9,6 +9,9 @@ export type Panel = 'none' | 'trust' | 'dive' | 'calendar' | 'submission';
 export const WINDOW_OPTIONS = [7, 14, 30] as const;
 export const AUDIENCES: Audience[] = ['planner', 'educator', 'public'];
 export const DATE_TWEEN_MS = 1200;
+export const MONTH_TOUR_MS = 20_000;
+export interface MonthTour { status: 'playing' | 'paused' | 'complete'; elapsedMs: number }
+const pausedTour = (tour: MonthTour | null): MonthTour | null => tour?.status === 'playing' ? { ...tour, status: 'paused' } : tour;
 
 interface State {
   data: AppData | null;
@@ -26,9 +29,11 @@ interface State {
   siteId: string;
   /** Explicit pin/row camera requests, including reselecting the same site. */
   siteFocusVersion: number;
+  cameraFocus: 'site' | 'moon';
   audience: Audience;
   panel: Panel;
   playing: boolean;
+  monthTour: MonthTour | null;
   notice: string | null;
   briefing: boolean;
   missionActive: boolean;
@@ -50,6 +55,8 @@ interface State {
   setAudience(a: Audience): void;
   setPanel(p: Panel): void;
   setPlaying(p: boolean): void;
+  playMonth(): void;
+  pauseMonth(): void;
   setNotice(n: string | null): void;
   startMission(): void;
   dismissBriefing(): void;
@@ -77,9 +84,11 @@ export const useStore = create<State>((set, get) => ({
   motionDurationMs: DATE_TWEEN_MS,
   siteId: '',
   siteFocusVersion: 0,
+  cameraFocus: 'moon',
   audience: 'planner',
   panel: 'none',
   playing: false,
+  monthTour: null,
   notice: null,
   briefing: true,
   missionActive: false,
@@ -112,6 +121,7 @@ export const useStore = create<State>((set, get) => ({
       navigationVersion: get().navigationVersion + 1,
       moving: false,
       playing: false,
+      monthTour: null,
       motionDurationMs: DATE_TWEEN_MS,
       panel: 'none',
       notice:
@@ -134,8 +144,8 @@ export const useStore = create<State>((set, get) => ({
         : null;
     const next = start + (targetMs - windowStartMs);
     const moment = next < start + windowDays * DAY_MS ? next : start + ((targetMs - windowStartMs) % DAY_MS);
-    if (glide && !prefersReducedMotion()) set({ windowStartMs: start, targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: durationMs, notice, playing: false, comparison: null });
-    else set({ windowStartMs: start, targetMs: moment, displayMs: moment, moving: false, motionDurationMs: durationMs, notice, playing: false, comparison: null });
+    if (glide && !prefersReducedMotion()) set({ windowStartMs: start, targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: durationMs, notice, playing: false, monthTour: null, comparison: null });
+    else set({ windowStartMs: start, targetMs: moment, displayMs: moment, moving: false, motionDurationMs: durationMs, notice, playing: false, monthTour: null, comparison: null });
   },
   stepDays: (days) => get().setDate(get().windowStartMs + days * DAY_MS),
 
@@ -144,8 +154,8 @@ export const useStore = create<State>((set, get) => ({
     const { windowStartMs, windowDays } = get();
     const end = windowStartMs + windowDays * DAY_MS - STEP_MS;
     const moment = Math.min(end, Math.max(windowStartMs, ms));
-    if (glide && !prefersReducedMotion()) set({ targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: DATE_TWEEN_MS, playing: false });
-    else set({ targetMs: moment, displayMs: moment, moving: false, motionDurationMs: DATE_TWEEN_MS, playing: false });
+    if (glide && !prefersReducedMotion()) set({ targetMs: moment, moving: moment !== get().displayMs, motionDurationMs: DATE_TWEEN_MS, playing: false, monthTour: null });
+    else set({ targetMs: moment, displayMs: moment, moving: false, motionDurationMs: DATE_TWEEN_MS, playing: false, monthTour: null });
   },
   setDisplay: (displayMs, moving) => set({ displayMs, moving }),
   setWindowDays: (windowDays) => {
@@ -153,11 +163,30 @@ export const useStore = create<State>((set, get) => ({
     get().setDate(get().windowStartMs, false);
     get().setMoment(get().targetMs);
   },
-  setSite: (siteId, focus = false) => set(s => ({ siteId, siteFocusVersion: s.siteFocusVersion + (focus ? 1 : 0), comparison: siteId === s.siteId ? s.comparison : null, motionDurationMs: s.moving ? s.motionDurationMs : DATE_TWEEN_MS })),
-  setAudience: (audience) => set({ audience, playing: false }),
+  setSite: (siteId, focus = false) => set(s => ({ siteId, siteFocusVersion: s.siteFocusVersion + (focus ? 1 : 0), cameraFocus: focus ? 'site' : s.cameraFocus, comparison: siteId === s.siteId ? s.comparison : null, motionDurationMs: s.moving ? s.motionDurationMs : DATE_TWEEN_MS })),
+  setAudience: (audience) => set(s => ({ audience, playing: false, monthTour: pausedTour(s.monthTour) })),
   // Opening a panel clears an earlier notice, which would otherwise sit on top of the panel.
-  setPanel: (panel) => set(panel === 'none' ? { panel } : { panel, notice: null }),
-  setPlaying: (playing) => set({ playing }),
+  setPanel: (panel) => set(s => panel === 'none' ? { panel } : { panel, notice: null, monthTour: pausedTour(s.monthTour) }),
+  setPlaying: (playing) => set(s => ({ playing, monthTour: playing ? null : pausedTour(s.monthTour) })),
+  playMonth: () => {
+    const s = get();
+    if (!s.data) return;
+    if (s.monthTour?.status === 'paused' && !prefersReducedMotion()) {
+      set({ monthTour: { ...s.monthTour, status: 'playing' }, playing: false });
+      return;
+    }
+    const { first, last } = dateLimits(s.data, 30);
+    const start = Math.min(last, Math.max(first, s.windowStartMs));
+    const reduced = prefersReducedMotion();
+    const moment = reduced ? start + 30 * DAY_MS - STEP_MS : start;
+    set({ windowStartMs: start, windowDays: 30, displayMs: moment, targetMs: moment,
+      moving: false, motionDurationMs: 0, playing: false, briefing: false, comparison: null,
+      monthTour: { status: reduced ? 'complete' : 'playing', elapsedMs: reduced ? MONTH_TOUR_MS : 0 },
+      cameraFocus: 'moon', siteFocusVersion: s.siteFocusVersion + 1,
+      notice: reduced ? 'Reduced motion is on. Showing the end of the 30-day window; use the scene controls to inspect each day.'
+        : start !== s.windowStartMs ? 'The 30-day tour uses the nearest start within the available data.' : null });
+  },
+  pauseMonth: () => set(s => ({ monthTour: pausedTour(s.monthTour) })),
   setNotice: (notice) => set({ notice }),
   startMission: () => {
     const { data } = get();
@@ -170,6 +199,7 @@ export const useStore = create<State>((set, get) => ({
       displayMs: EXAMPLE_MISSION.startMs,
       moving: false,
       playing: false,
+      monthTour: null,
       motionDurationMs: 0,
       audience: 'planner',
       panel: 'none',

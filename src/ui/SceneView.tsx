@@ -106,7 +106,10 @@ export function SceneView({ data, verdicts }: Props) {
 
   useEffect(() => scene.current?.setSelected(siteId), [siteId]);
   useEffect(() => {
-    if (siteFocusVersion) scene.current?.focusSite(useStore.getState().siteId);
+    if (siteFocusVersion) {
+      const s = useStore.getState();
+      scene.current?.focusSite(s.cameraFocus === 'moon' ? null : s.siteId);
+    }
   }, [siteFocusVersion]);
 
   return (

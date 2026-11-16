@@ -11,6 +11,7 @@ Everything runs in the browser. There is no server and no API key.
 ## Run it
 
 ```bash
+nvm use 24         # Node.js 24.x (or install it with your preferred version manager)
 npm install
 npm run dev        # http://localhost:5173
 npm test           # engine tests against the SPICE reference values
@@ -81,8 +82,42 @@ Sites are defined in `tools/sites.json`.
 
 **Design**: Instrument Serif typeface (SIL Open Font License, `public/fonts/OFL.txt`). The sky shader, palette and visual style are adapted from Voca, the team's own earlier app; that is pre-existing work.
 
-**AI tools**: Claude (Anthropic) and Codex (OpenAI) assisted with writing, debugging,
-testing and reviewing the code. Screenshots and the walkthrough record the running app.
+## AI use and data provenance
+
+The team chose the challenge, set the goals and design direction, and directed
+the work. Claude (Anthropic), through Claude Code, and Codex (OpenAI) generated
+and revised substantial portions of the code, tests, documentation and
+data-processing scripts under that direction. AI tools also assisted with
+debugging, research and code review. This disclosure covers the repository and
+its prepared data pipeline, not just files carrying an AI comment.
+
+The scientific source data comes from the cited NASA/JPL datasets. Prepared
+ephemeris tables, terrain masks and validation files are numerical outputs of
+the processing scripts; the displayed values are deterministic calculations,
+not AI predictions or invented NASA measurements. The Moon textures come from
+NASA's CGI Moon Kit. Screenshots and the walkthrough capture the running app.
+
+## Limits
+
+- Three sampled site points, not a survey of all landing terrain; small features
+  below the 40 m grid can be missed. The 80 m comparison measures sensitivity,
+  not an error bound or ground truth.
+- Thirty-minute samples estimate visibility shares and gap durations within the
+  selected window; a gap can extend beyond that window. Coverage is 2026–2030.
+- Earth visibility and its longest gap use a half-disc threshold. They do not
+  model antennas, radio budgets, relays or ground-station service.
+- Sunlight visibility is not power or energy yield. Thermal conditions, slopes,
+  hazards and landing safety are not assessed. Eclipse geometry excludes
+  atmospheric refraction and diffuse light.
+- Good/Risky/Poor are our sunlight thresholds, not NASA standards or approval.
+
+## Inspiration
+
+[Earthrise](https://github.com/Abulkosim/earthrise) inspired this iteration's
+site-comparison view, longest Earth-gap readout and guided month playback.
+Southlight implements these features using its existing site metrics, calendar
+and date animation. Earthrise's numerical results and validation claims are not
+Southlight validation evidence.
 
 ## Mission and virtual project guide
 

@@ -2529,6 +2529,7 @@
    "sunlight_pct": 100.0,
    "longest_dark_hours": 0.0,
    "earth_link_pct": 46.736111111111114,
+   "longest_earth_gap_hours": 322.0,
    "combined_pct": 46.736111111111114,
    "verdict": "Good"
   },
@@ -2539,6 +2540,7 @@
    "sunlight_pct": 59.09722222222222,
    "longest_dark_hours": 93.5,
    "earth_link_pct": 55.69444444444444,
+   "longest_earth_gap_hours": 319.0,
    "combined_pct": 45.90277777777778,
    "verdict": "Risky"
   },
@@ -2549,6 +2551,7 @@
    "sunlight_pct": 100.0,
    "longest_dark_hours": 0.0,
    "earth_link_pct": 73.66071428571429,
+   "longest_earth_gap_hours": 88.5,
    "combined_pct": 73.66071428571429,
    "verdict": "Good"
   },
@@ -2559,6 +2562,7 @@
    "sunlight_pct": 98.51190476190477,
    "longest_dark_hours": 1.5,
    "earth_link_pct": 5.059523809523809,
+   "longest_earth_gap_hours": 159.5,
    "combined_pct": 5.059523809523809,
    "verdict": "Good"
   },
@@ -2569,7 +2573,19 @@
    "sunlight_pct": 100.0,
    "longest_dark_hours": 0.0,
    "earth_link_pct": 0.0,
+   "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
+   "verdict": "Good"
+  },
+  {
+   "site": "connecting-ridge",
+   "start_utc": "2027-01-10T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 100.0,
+   "longest_dark_hours": 0.0,
+   "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
+   "combined_pct": 100.0,
    "verdict": "Good"
   },
   {
@@ -2579,6 +2595,7 @@
    "sunlight_pct": 64.23611111111111,
    "longest_dark_hours": 110.5,
    "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
    "combined_pct": 64.23611111111111,
    "verdict": "Risky"
   },
@@ -2589,6 +2606,7 @@
    "sunlight_pct": 40.0,
    "longest_dark_hours": 328.0,
    "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
    "combined_pct": 40.0,
    "verdict": "Poor"
   },
@@ -2599,6 +2617,7 @@
    "sunlight_pct": 8.035714285714286,
    "longest_dark_hours": 302.0,
    "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
    "combined_pct": 8.035714285714286,
    "verdict": "Poor"
   },
@@ -2609,6 +2628,7 @@
    "sunlight_pct": 98.51190476190477,
    "longest_dark_hours": 1.5,
    "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
    "combined_pct": 98.51190476190477,
    "verdict": "Good"
   },
@@ -2619,8 +2639,20 @@
    "sunlight_pct": 69.34523809523809,
    "longest_dark_hours": 41.0,
    "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
    "combined_pct": 69.34523809523809,
    "verdict": "Risky"
+  },
+  {
+   "site": "malapert-massif",
+   "start_utc": "2027-01-10T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 0.0,
+   "longest_dark_hours": 168.0,
+   "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
+   "combined_pct": 0.0,
+   "verdict": "Poor"
   },
   {
    "site": "nobile-rim-1",
@@ -2629,6 +2661,7 @@
    "sunlight_pct": 60.69444444444444,
    "longest_dark_hours": 217.5,
    "earth_link_pct": 40.97222222222222,
+   "longest_earth_gap_hours": 353.0,
    "combined_pct": 33.05555555555556,
    "verdict": "Poor"
   },
@@ -2639,6 +2672,7 @@
    "sunlight_pct": 30.833333333333336,
    "longest_dark_hours": 187.5,
    "earth_link_pct": 51.94444444444445,
+   "longest_earth_gap_hours": 346.0,
    "combined_pct": 2.1527777777777777,
    "verdict": "Poor"
   },
@@ -2649,6 +2683,7 @@
    "sunlight_pct": 34.970238095238095,
    "longest_dark_hours": 214.5,
    "earth_link_pct": 66.66666666666666,
+   "longest_earth_gap_hours": 112.0,
    "combined_pct": 34.970238095238095,
    "verdict": "Poor"
   },
@@ -2659,6 +2694,7 @@
    "sunlight_pct": 58.03571428571429,
    "longest_dark_hours": 42.0,
    "earth_link_pct": 0.0,
+   "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
    "verdict": "Risky"
   },
@@ -2669,8 +2705,20 @@
    "sunlight_pct": 0.2976190476190476,
    "longest_dark_hours": 162.0,
    "earth_link_pct": 0.0,
+   "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
    "verdict": "Poor"
+  },
+  {
+   "site": "nobile-rim-1",
+   "start_utc": "2027-01-10T00:00:00Z",
+   "days": 7,
+   "sunlight_pct": 83.92857142857143,
+   "longest_dark_hours": 23.5,
+   "earth_link_pct": 94.04761904761905,
+   "longest_earth_gap_hours": 10.0,
+   "combined_pct": 83.92857142857143,
+   "verdict": "Good"
   }
  ]
 }
