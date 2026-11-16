@@ -6,4 +6,4 @@ Approved by the user on 15 November 2026.
 - [x] Add longest Earth visibility gap to the engine, terrain comparison, results and CSV; verify boundary cases and real dates against the Python reference.
 - [x] Add bounded 30-day scene playback with easing, pause/resume/replay, reduced motion and whole-Moon framing.
 - [x] Expand README and project-page AI/data disclosure, limits, run instructions and inspiration credits.
-- [ ] Review, run tests and responsive browser checks, refresh media, push and publish; verify the public build.
+- [x] Review, run tests and responsive browser checks, refresh media, push and publish; verify the public build.

@@ -146,6 +146,10 @@ clipped vertically; that bug (four of six rows hidden at desktop width) was
 found by eye and fixed. Durations of whole days now read "7 days", not
 "7.0 days". `verify:all-sites` and `verify:browser` still pass.
 
+Code commit `9aa472c` is published at https://southlight-tau.vercel.app/.
+All three browser-verification commands pass against that public build, and
+the walkthrough video and screenshots were re-recorded from it.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run
