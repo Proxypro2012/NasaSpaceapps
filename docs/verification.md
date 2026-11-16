@@ -111,6 +111,14 @@ Chrome DevTools snapshot audits give accessibility, best practices and SEO 100
 on desktop and mobile; these are not performance measurements. React Doctor
 reports zero errors and no performance findings, with the same six existing warnings.
 
+Code commit `057a210` is published at https://southlight-tau.vercel.app/.
+Both browser-verification commands pass against that public build, including
+all three dates, 153 sampled animation frames, the complete compact mission
+card and the refreshed 29.6-second walkthrough. Public snapshot audits also
+score 100 for accessibility, best practices and SEO on desktop and mobile.
+The final independent code review reports no actionable regressions; its sandbox
+could not launch Chrome, so all browser checks were run in the main session.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run

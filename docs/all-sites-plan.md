@@ -13,3 +13,7 @@ disagreement. All 29 unit tests, production build and existing browser checks
 pass. Independent Codex review: no actionable regressions; browser checks were
 run separately in the main session because the reviewer sandbox could not launch
 Chrome. Engine files are unchanged.
+
+Published code commit `057a210` to https://southlight-tau.vercel.app/ and pushed to
+GitHub. Both browser verification commands pass on the public app; the public
+motion run sampled 153 frames with no row/pin disagreement.
