@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AppData } from '../engine/load';
 import { dailyCells, windowMetrics } from '../engine/metrics';
-import type { DayCell, WindowMetrics } from '../engine/types';
+import type { DayCell, Verdict, WindowMetrics } from '../engine/types';
 import { dateEase } from '../state/motion';
 import { prefersReducedMotion, useStore } from '../state/store';
 
@@ -13,6 +13,15 @@ export function useWindowMetrics(data: AppData | null, startMs: number, days: nu
     for (const site of data.sites) out[site.id] = windowMetrics(data.eph, site, startMs, days);
     return out;
   }, [data, startMs, days]);
+}
+
+/** Pins and the All sites strip change verdicts together when date travel arrives. */
+export function usePinVerdicts(metrics: Record<string, WindowMetrics>): Record<string, Verdict> {
+  const moving = useStore(s => s.moving);
+  const next = useMemo(() => Object.fromEntries(Object.entries(metrics).map(([id, m]) => [id, m.verdict])), [metrics]);
+  const [settled, setSettled] = useState(next);
+  useEffect(() => { if (!moving) setSettled(next); }, [moving, next]);
+  return moving ? settled : next;
 }
 
 export function useCalendar(data: AppData, startMs: number, days: number): Record<string, DayCell[]> {

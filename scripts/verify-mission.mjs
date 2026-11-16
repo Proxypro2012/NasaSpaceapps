@@ -26,6 +26,7 @@ try {
       return c && Math.abs(c.width - c.clientWidth * ratio) < 2 && Math.abs(c.height - c.clientHeight * ratio) < 2;
     });
     await expect(page.locator('.together-readout')).toContainText('0%');
+    await page.locator('.site-details > summary').click();
     await page.locator('.timeline-earth .timeline-track').focus();
     await page.keyboard.press('Enter');
     await expect(page.locator('.moment-explanation')).toContainText('terrain skyline blocks it');
@@ -170,6 +171,7 @@ try {
   const texturePage = await texture.newPage();
   await texturePage.goto(base);
   await expect(texturePage.locator('.scene-error')).toContainText('The geometric results and skyline still work');
+  await texturePage.locator('.site-details > summary').click();
   await expect(texturePage.locator('.visibility-timeline')).toBeVisible();
   await texture.close();
 } catch (error) {

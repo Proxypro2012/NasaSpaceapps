@@ -24,6 +24,8 @@ interface State {
   moving: boolean;
   motionDurationMs: number;
   siteId: string;
+  /** Explicit pin/row camera requests, including reselecting the same site. */
+  siteFocusVersion: number;
   audience: Audience;
   panel: Panel;
   playing: boolean;
@@ -44,7 +46,7 @@ interface State {
   setMoment(ms: number, glide?: boolean): void;
   setDisplay(ms: number, moving: boolean): void;
   setWindowDays(days: number): void;
-  setSite(id: string): void;
+  setSite(id: string, focus?: boolean): void;
   setAudience(a: Audience): void;
   setPanel(p: Panel): void;
   setPlaying(p: boolean): void;
@@ -74,6 +76,7 @@ export const useStore = create<State>((set, get) => ({
   moving: false,
   motionDurationMs: DATE_TWEEN_MS,
   siteId: '',
+  siteFocusVersion: 0,
   audience: 'planner',
   panel: 'none',
   playing: false,
@@ -150,7 +153,7 @@ export const useStore = create<State>((set, get) => ({
     get().setDate(get().windowStartMs, false);
     get().setMoment(get().targetMs);
   },
-  setSite: (siteId) => set(s => ({ siteId, comparison: siteId === s.siteId ? s.comparison : null, motionDurationMs: s.moving ? s.motionDurationMs : DATE_TWEEN_MS })),
+  setSite: (siteId, focus = false) => set(s => ({ siteId, siteFocusVersion: s.siteFocusVersion + (focus ? 1 : 0), comparison: siteId === s.siteId ? s.comparison : null, motionDurationMs: s.moving ? s.motionDurationMs : DATE_TWEEN_MS })),
   setAudience: (audience) => set({ audience, playing: false }),
   // Opening a panel clears an earlier notice, which would otherwise sit on top of the panel.
   setPanel: (panel) => set(panel === 'none' ? { panel } : { panel, notice: null }),

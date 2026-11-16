@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import type { AppData } from '../engine/load';
 import { THRESHOLDS } from '../engine/metrics';
-import type { Site, WindowMetrics } from '../engine/types';
+import type { Site, Verdict, WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
 import { EvidenceSummary, MissionComparison, MissionPrompt } from './Mission';
 import { VisibilityTimeline } from './VisibilityTimeline';
 import { WindowRange } from './WindowRange';
+import { AllSites } from './AllSites';
 import { VERDICT_GLYPH, duration, fmtDayMonth, isoDay, pct } from './format';
 import { useCountUp } from './hooks';
 import { download, encodeLink, windowCsv } from './share';
@@ -13,6 +14,7 @@ import { download, encodeLink, windowCsv } from './share';
 interface Props {
   data: AppData;
   metrics: Record<string, WindowMetrics>;
+  verdicts: Record<string, Verdict>;
 }
 
 /** The figure large, its unit small, so "3.2 days" fits beside the other numbers. */
@@ -51,7 +53,7 @@ export function ResolutionNote({ metrics }: { metrics: WindowMetrics }) {
   );
 }
 
-export function VerdictCard({ data, metrics }: Props) {
+export function VerdictCard({ data, metrics, verdicts }: Props) {
   const siteId = useStore(s => s.siteId);
   const windowStartMs = useStore(s => s.windowStartMs);
   const windowDays = useStore(s => s.windowDays);
@@ -59,7 +61,7 @@ export function VerdictCard({ data, metrics }: Props) {
   const audience = useStore(s => s.audience);
   const playing = useStore(s => s.playing);
   const comparison = useStore(s => s.comparison);
-  const { setSite, setPanel, setPlaying, setNotice } = useStore.getState();
+  const { setPanel, setPlaying, setNotice } = useStore.getState();
   const site = data.sites.find((s) => s.id === siteId) as Site;
   const m = metrics[siteId];
   const [copied, setCopied] = useState(false);
@@ -83,15 +85,6 @@ export function VerdictCard({ data, metrics }: Props) {
         <h1>{site.name}</h1>
         <VerdictBadge verdict={m.verdict} />
       </header>
-      <nav className="other-sites" aria-label="Other landing sites">
-        {data.sites
-          .filter((s) => s.id !== siteId)
-          .map((s) => (
-            <button key={s.id} type="button" className="link" onClick={() => setSite(s.id)}>
-              {s.name}
-            </button>
-          ))}
-      </nav>
       <WindowRange data={data} />
       <MissionPrompt data={data} metrics={m} />
       <MissionComparison />
@@ -156,13 +149,14 @@ export function VerdictCard({ data, metrics }: Props) {
         </div>
       )}
 
-      <ResolutionNote metrics={m} />
-      <EvidenceSummary data={data} metrics={m} />
-      <VisibilityTimeline data={data} site={site} startMs={windowStartMs} days={windowDays} />
-      <details className="more" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
-        <summary>Site details and exports</summary>
+      <AllSites data={data} metrics={metrics} verdicts={verdicts} />
+      <details className="more site-details" data-sensitive={m.resolution?.sensitive} open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+        <summary>Skyline and details{m.resolution?.sensitive && <span className="details-warning"> · Terrain-sensitive verdict</span>}</summary>
         {open && (
           <div className="more-body">
+            <ResolutionNote metrics={m} />
+            <EvidenceSummary data={data} metrics={m} />
+            <VisibilityTimeline data={data} site={site} startMs={windowStartMs} days={windowDays} />
             <p className="muted">
               {site.blurb}. {Math.abs(site.lat_deg).toFixed(2)}° S, {site.lon_deg.toFixed(1)}° E
             </p>

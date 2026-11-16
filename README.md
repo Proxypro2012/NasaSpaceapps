@@ -99,8 +99,14 @@ The header's **Scene time** is the UTC moment actually shown. The result card's
 own start-date control. Calendar and timeline selections inspect moments inside
 that interval. Shared links restore both dates, site and audience in a fresh tab,
 in an already-open tab, and through browser back/forward navigation.
+The compact **All sites** strip compares the same window across all three sites.
+Its verdicts and dots share the pin colors and timing; select a row to focus its
+pin. Open **Skyline and details** for the timeline, evidence and exports.
 Source materials are in `public/submission/`; current submission-requirement
 findings are in `docs/submission-requirements.md`.
+
+Run `npm run verify:all-sites` against a production preview to check all three
+sites against the engine and pins on three dates, animation, selection and fit.
 
 Deploy with the authenticated Vercel CLI using `vercel --prod`. The project
 configuration builds `dist/`; `.vercelignore` excludes raw data and environments.

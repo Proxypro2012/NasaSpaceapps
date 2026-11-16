@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { AppData } from '../engine/load';
-import type { WindowMetrics } from '../engine/types';
+import type { Verdict } from '../engine/types';
 import { MoonScene } from '../scene/MoonScene';
 import { prefersReducedMotion, useStore } from '../state/store';
 
 interface Props {
   data: AppData;
-  metrics: Record<string, WindowMetrics>;
+  verdicts: Record<string, Verdict>;
 }
 
 /** Width kept clear on the right for the verdict card, in pixels. */
@@ -28,15 +28,15 @@ function grainTile(): string {
   return c.toDataURL('image/png');
 }
 
-export function SceneView({ data, metrics }: Props) {
+export function SceneView({ data, verdicts }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const overlay = useRef<HTMLDivElement>(null);
   const grain = useRef<HTMLDivElement>(null);
   const scene = useRef<MoonScene | null>(null);
-  const latest = useRef(metrics);
-  useEffect(() => { latest.current = metrics; }, [metrics]);
-  const moving = useStore((s) => s.moving);
+  const latest = useRef(verdicts);
+  useEffect(() => { latest.current = verdicts; }, [verdicts]);
   const siteId = useStore((s) => s.siteId);
+  const siteFocusVersion = useStore(s => s.siteFocusVersion);
   const playing = useStore((s) => s.playing);
   const briefing = useStore(s => s.briefing);
   const [moved, setMoved] = useState(false);
@@ -52,8 +52,7 @@ export function SceneView({ data, metrics }: Props) {
       reducedMotion: prefersReducedMotion(),
       // Clicking a pin selects it and flies to the pole, where the three sites pull apart.
       onSelectSite: (id) => {
-        useStore.getState().setSite(id);
-        s.focusSite(id);
+        useStore.getState().setSite(id, true);
       },
       onViewChange: setMoved,
       onAssetError: setAssetError,
@@ -64,7 +63,7 @@ export function SceneView({ data, metrics }: Props) {
     });
     scene.current = s;
     s.setTime(useStore.getState().displayMs);
-    s.setVerdicts(verdictsOf(latest.current), false);
+    s.setVerdicts(latest.current, false);
     s.setSelected(useStore.getState().siteId);
     // The scene reads the displayed date straight from the store on every change, outside React.
     const unsubscribe = useStore.subscribe((state) => {
@@ -102,10 +101,13 @@ export function SceneView({ data, metrics }: Props) {
 
   // Pins take their new colour when the date has finished moving, with a pulse if the verdict changed.
   useEffect(() => {
-    if (!moving) scene.current?.setVerdicts(verdictsOf(metrics), !playing);
-  }, [moving, metrics, playing]);
+    scene.current?.setVerdicts(verdicts, !playing);
+  }, [verdicts, playing]);
 
   useEffect(() => scene.current?.setSelected(siteId), [siteId]);
+  useEffect(() => {
+    if (siteFocusVersion) scene.current?.focusSite(useStore.getState().siteId);
+  }, [siteFocusVersion]);
 
   return (
     <div className="scene">
@@ -120,8 +122,4 @@ export function SceneView({ data, metrics }: Props) {
         </div>}
     </div>
   );
-}
-
-function verdictsOf(metrics: Record<string, WindowMetrics>) {
-  return Object.fromEntries(Object.entries(metrics).map(([id, m]) => [id, m.verdict]));
 }

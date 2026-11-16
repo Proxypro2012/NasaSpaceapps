@@ -11,6 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "verify:browser": "node scripts/verify-mission.mjs",
+    "verify:all-sites": "node scripts/verify-all-sites.mjs",
     "capture:mission": "node scripts/capture-mission.mjs"
   },
   "devDependencies": {

@@ -80,10 +80,42 @@ Current Cambridge-specific presentation length, review duration and any local
 submission deadline remain unconfirmed; see `submission-requirements.md`.
 Publishing this app does not submit the team project to the competition.
 
+## All sites strip
+
+The engine is unchanged. The strip consumes the existing per-site window metrics
+and shares one settled-verdict map with the pins. Percentages use the same date
+count-up; inspecting a scene moment preserves window totals. All nine row/pin
+verdicts, dot colors and displayed percentages match the engine for these
+30-day windows (UTC starts):
+
+| Start | Connecting Ridge | Malapert Massif | Nobile Rim 1 |
+| --- | --- | --- | --- |
+| 15 Nov 2026 | Good · 100% sun · 50% Earth | Risky · 64% sun · 100% Earth | Poor · 61% sun · 44% Earth |
+| 1 Jan 2027 | Good · 100% sun · 47% Earth | Poor · 56% sun · 100% Earth | Poor · 48% sun · 43% Earth |
+| 1 Jun 2027 | Risky · 59% sun · 56% Earth | Poor · 40% sun · 100% Earth | Poor · 31% sun · 52% Earth |
+
+Percentages are rounded for display; verdicts use unrounded engine values and
+longest darkness. The normal-motion run checked 167 animation frames for row/pin
+verdict agreement and confirmed intermediate count-up values. Pointer/keyboard
+selection and repeated selection after Whole Moon reset focus the camera and
+update the selected pin, card and row. Reduced motion cuts immediately.
+
+The strip is 149px tall; the collapsed card measured 655px at 375px width,
+593px at 768px, and 610px at 1280px in an 800px-high browser. The complete mission
+card, including its hint, measures 696px, 615px and 689px respectively and has no
+internal scrolling at these sizes. There is no horizontal
+overflow or hidden row content. Skyline and evidence remain reachable through
+the disclosure, whose summary flags terrain-sensitive verdicts. Existing mission,
+navigation, responsive, dialog, loading and failure browser checks pass.
+Chrome DevTools snapshot audits give accessibility, best practices and SEO 100
+on desktop and mobile; these are not performance measurements. React Doctor
+reports zero errors and no performance findings, with the same six existing warnings.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run
 `npm run verify:browser`. To check production, set
 `APP_URL=https://southlight-tau.vercel.app` for the browser verification command.
+`npm run verify:all-sites` reproduces the strip checks.
 `node scripts/audit-mission.mjs` runs real-Chrome desktop/mobile Lighthouse audits.
 Browser artifacts are written to the ignored `.playwright-mcp/` folder.

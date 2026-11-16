@@ -8,7 +8,7 @@ import { CalendarSheet } from './ui/Calendar';
 import { Header } from './ui/Header';
 import { TrustPanel } from './ui/TrustPanel';
 import { VerdictCard } from './ui/VerdictCard';
-import { useEscape, useModalFocus, useWindowMetrics } from './ui/hooks';
+import { useEscape, useModalFocus, usePinVerdicts, useWindowMetrics } from './ui/hooks';
 import { MissionBriefing } from './ui/Mission';
 import { SubmissionSheet } from './ui/SubmissionSheet';
 import { decodeLink } from './ui/share';
@@ -76,6 +76,7 @@ function Loaded() {
   const notice = useStore(s => s.notice);
   const briefing = useStore(s => s.briefing);
   const metrics = useWindowMetrics(data, windowStartMs, windowDays);
+  const verdicts = usePinVerdicts(metrics);
 
   useEffect(() => {
     if (data && new URLSearchParams(location.search).has('guide')) useStore.getState().setPanel('submission');
@@ -101,13 +102,13 @@ function Loaded() {
       <div className="workspace" inert={panel !== 'none'}>
       {data ? <ViewBoundary fallback={<div className="scene"><p className="scene-error" role="alert">The lunar view could not load. The geometric results and skyline still work. <button type="button" className="link" onClick={() => location.reload()}>Reload</button></p></div>}>
       <Suspense fallback={<div className="scene"><p className="scene-error" role="status">Preparing the lunar view…</p></div>}>
-        <SceneView data={data} metrics={metrics} />
+        <SceneView data={data} verdicts={verdicts} />
       </Suspense>
       </ViewBoundary> : <div className="scene"><p className="scene-error" role="status">Loading NASA positions and terrain…</p></div>}
       {data ? <Header data={data} /> : <header className="topbar"><div className="brand"><span className="wordmark">Southlight</span></div></header>}
       <main className="layout">
         <MissionBriefing hidden={!data && Object.keys(decodeLink(location.hash)).length > 0} />
-        {data && <VerdictCard data={data} metrics={metrics} />}
+        {data && <VerdictCard data={data} metrics={metrics} verdicts={verdicts} />}
       </main>
       </div>
       {notice && (

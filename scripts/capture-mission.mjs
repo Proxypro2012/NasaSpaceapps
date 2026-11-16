@@ -36,6 +36,7 @@ await at(3);
 await page.getByRole('button', { name: 'Try a mission', exact: true }).click();
 await caption('Connecting Ridge, 1 January 2027: sunlight 100%,\nbut Earth is hidden for the entire seven-day window.');
 await at(8);
+await page.locator('.site-details > summary').click();
 await page.locator('.timeline-earth .timeline-track').focus();
 await page.keyboard.press('Enter');
 await caption('Select an unavailable period. The shared cursor\nreveals the terrain obstruction in the skyline.');
@@ -53,7 +54,7 @@ await caption('Find a better window. The scene accelerates\nthrough real dates, 
 await at(19);
 await caption('Start nine days later: both are visible for 100%\nof the sampled window. The original stays beside it.');
 await at(24);
-await page.getByRole('button', { name: 'How we know', exact: true }).click();
+await page.locator('.topbar-right').getByRole('button', { name: 'How we know', exact: true }).click();
 await caption('Inspect NASA sources, direction validation and\nterrain sensitivity. Visibility is not landing safety.');
 await page.locator('.sheet-body').evaluate(el => el.scrollTo({ top: 300, behavior: 'smooth' }));
 await at(28.2);

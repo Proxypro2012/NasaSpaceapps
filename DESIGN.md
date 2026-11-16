@@ -36,6 +36,25 @@ clearance if needed; controls must remain reachable at 375, 390 and 768px.
   methods, measured uncertainty and the scope of validation.
 - Menu: accessible window/view choices; no offscreen controls at narrow widths.
 - Loading/error states: retain explicit startup and terrain-load feedback.
+- AllSites: a quiet strip below the main metrics replaces the other-site links.
+  Three 40px button rows share a grid: 8px condition dot, site name, text verdict,
+  sunlight and Earth-link percentages. Use 12px labels, 13px row text, tabular
+  numbers, 4/8px spacing and the existing verdict colors. A subtle sea-glass tint
+  and aria-pressed identify the selection; hover and keyboard focus stay visible.
+  Selecting any row, including the current site, requests the existing pin-camera
+  flight. Percentages use the existing count-up; text verdicts and dots change
+  together with the pins at date arrival, using the same 350ms color transition.
+  Window totals stay fixed when only the scene moment changes. Skyline, sources,
+  terrain comparison and exports live in one collapsed Skyline and details
+  disclosure; its summary flags terrain sensitivity. Keep the viewport-bounded
+  desktop card and the existing single-column phone flow, without horizontal scroll.
+  Card padding is 12px vertically and 20px horizontally with 12px gaps; the
+  assessment range uses 4px gaps and 8px vertical padding. Retain three metric
+  columns on phones with 8px gaps, allowing labels and supporting text to wrap.
+  Metrics use 8px vertical padding. In MissionPrompt, place the together readout
+  beside the action in a two-column grid with 4px row/8px column gaps and 1.2
+  readout line height; objective and hint span both columns. Keep every word and
+  action visible while the complete default mission card fits at 1280×800.
 
 ## 6. Motion
 Date travel starts at rest, accelerates and decelerates without overshoot. Use a
