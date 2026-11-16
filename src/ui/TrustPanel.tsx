@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { AppData } from '../engine/load';
 import { STEP_MINUTES, THRESHOLDS, VISIBLE_THRESHOLD } from '../engine/metrics';
+import { nearestPsr, psrHostLabel } from '../engine/psr';
 import { useStore } from '../state/store';
-import { fmtDate } from './format';
+import { fmtDate, km } from './format';
 import { useEscape } from './hooks';
 
 function Check({ ok, children }: { ok: boolean | null; children: React.ReactNode }) {
@@ -23,6 +24,7 @@ function references(data: AppData): string {
     '- NASA GSFC PGDA, high-resolution LOLA site maps, used for site locations (pgda.gsfc.nasa.gov/products/78); Barker, M. K., et al. (2021), Planetary and Space Science 203, 105119',
     '- NASA Scientific Visualization Studio, CGI Moon Kit (svs.gsfc.nasa.gov/4720): colour map and elevation map, used for the picture of the Moon only',
     '- NASA/JPL Horizons system (ssd.jpl.nasa.gov/horizons), used as an independent check',
+    `- ${data.psrs.source}, south-pole permanently shadowed regions of ${data.psrs.min_area_km2} km² or more (${data.psrs.url.replace(/^https:\/\//, '')}, retrieved ${data.psrs.retrieved_utc}); outlines from Mazarico, E., et al. (2011), Icarus 211, 1066-1081`,
     `- ${data.validation.yearly.benchmark.source}`,
     'Software',
     '- SPICE toolkit via SpiceyPy; NumPy; Rasterio; Pillow (data preparation)',
@@ -106,6 +108,11 @@ export function TrustPanel({ data }: { data: AppData }) {
               <li>
                 The window is stepped every {STEP_MINUTES} minutes. Sunlight and Earth-in-view count the steps where at least{' '}
                 {VISIBLE_THRESHOLD * 100}% of the disc is clear. The dark stretch is the longest run without direct sunlight, including total eclipses.
+              </li>
+              <li>
+                The line under the site name splits the window into 24-hour days from its start. A day is operable when the Sun and Earth
+                are both in view for at least half of it; a final half day counts as half. It also gives the start of the first stretch of
+                full darkness lasting {THRESHOLDS.goodMaxDarkHours} hours or more, the length that rules out a Good verdict.
               </li>
             </ol>
             <p>All of this runs in your browser. Nothing is sent to a server.</p>
@@ -265,6 +272,47 @@ export function TrustPanel({ data }: { data: AppData }) {
                 and Earth and the Sun are drawn much closer than they are. Only their directions are real.
               </li>
             </ul>
+          </section>
+
+          <section>
+            <h2>Water-ice targets</h2>
+            <p>
+              A permanently shadowed region (PSR) is ground the Sun never reaches, usually a crater floor near the pole. PSRs are cold
+              enough to trap water ice, so they are prime targets for finding it. Being near one suggests possible water ice; it does not
+              mean ice has been confirmed there.
+            </p>
+            <p>
+              PSR locations come from the {data.psrs.source}, which lists every south-pole PSR of {data.psrs.min_area_km2} km² or more
+              with its centre point and area. Its shadow outlines come from Mazarico et al. (2011), who modelled sunlight over an 18.6-year
+              cycle on NASA's Lunar Orbiter Laser Altimeter (LOLA) terrain. We store the {data.psrs.psrs.length} south-pole entries
+              unchanged and measure the great-circle distance from each site to each PSR's centre on a {data.sitesFile.reference_radius_km} km
+              sphere. The shadow's edge is closer than its centre, and smaller shadowed pockets below the atlas's size limit lie closer still.
+            </p>
+            <table className="data">
+              <thead>
+                <tr>
+                  <th>Site</th>
+                  <th>Nearest PSR (atlas ID)</th>
+                  <th>In or near</th>
+                  <th>Area</th>
+                  <th>Distance to centre</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.sites.map((s) => {
+                  const n = nearestPsr(s, data.psrs.psrs, data.sitesFile.reference_radius_km);
+                  return n && (
+                    <tr key={s.id}>
+                      <td>{s.name}</td>
+                      <td>{n.psr.id}</td>
+                      <td>{psrHostLabel(n.psr.features)}</td>
+                      <td>{Math.round(n.psr.area_km2)} km²</td>
+                      <td>{km(n.distanceKm)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </section>
 
           <section>

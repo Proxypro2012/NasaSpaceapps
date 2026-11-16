@@ -150,6 +150,36 @@ Code commit `9aa472c` is published at https://southlight-tau.vercel.app/.
 All three browser-verification commands pass against that public build, and
 the walkthrough video and screenshots were re-recorded from it.
 
+## Window summary, Nearest PSR and longer presets
+
+No existing metric changed. Two readouts are new: the line under the site name
+(operable days and the first dark stretch of 48 h or longer) and Nearest PSR.
+
+- **Summary line.** `src/engine/summary.ts` and an independent NumPy version in
+  `tools/lunar/metrics.py` agree exactly on all 21 SPICE reference windows,
+  including three new 29.5-day windows. Regenerating the fixture left every
+  existing value byte-identical. Unit tests cover the half-day threshold, the
+  half day at the end of a lunar-day window, a 47.5 h stretch that must not
+  count, a stretch under way at the window start, and one cut off by the window end.
+- **Nearest PSR.** `tools/fetch_psrs.py` parses the 164 south-pole rows of the
+  LROC PSR Atlas into `public/data/psrs.json` unchanged. Distances are
+  great-circle to each PSR's centre and match an independent vector calculation
+  for every site and PSR: Connecting Ridge 15.5 km (SP_895060_2806850,
+  de Gerlache / Shackleton), Malapert Massif 33.4 km (SP_860280_3443410),
+  Nobile Rim 1 19.0 km (SP_853730_0452650, Nobile).
+- **Presets and search.** Presets are 7, 14, 29.5, 30 and 365 days. The search
+  now computes each 30-minute sample once and scores candidates from running
+  totals. It returns results identical to the previous loop for every preset,
+  near both ends of the data and for a site without a secondary map. A one-year
+  search over 365 starts fell from about 5.5 s to 52 ms in Node (127 ms in the
+  browser); the 30-day search fell from 0.4 s to 19 ms.
+
+`npm run verify:psr` checks the summary line against the SPICE values on four
+windows, PSR distances on the card, in Compare sites and in How we know, both
+new presets and their links, the one-year search time and calendar, and that
+the card fits without inner scrolling at 375, 768 and 1280 px. The other three
+browser checks still pass, and the walkthrough and screenshots were re-recorded.
+
 ## Reproduce
 
 Run `npm test`, `npm run build`, and `npm run preview`. Then run
@@ -157,5 +187,6 @@ Run `npm test`, `npm run build`, and `npm run preview`. Then run
 `APP_URL=https://southlight-tau.vercel.app` for the browser verification command.
 `npm run verify:all-sites` reproduces the strip checks.
 `npm run verify:comparison` reproduces the comparison, Earth-gap and month checks.
+`npm run verify:psr` reproduces the summary-line, Nearest PSR and preset checks.
 `node scripts/audit-mission.mjs` runs real-Chrome desktop/mobile Lighthouse audits.
 Browser artifacts are written to the ignored `.playwright-mcp/` folder.

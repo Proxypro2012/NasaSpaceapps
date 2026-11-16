@@ -13,6 +13,7 @@
     "verify:browser": "node scripts/verify-mission.mjs",
     "verify:all-sites": "node scripts/verify-all-sites.mjs",
     "verify:comparison": "node scripts/verify-comparison-tour.mjs",
+    "verify:psr": "node scripts/verify-psr-presets.mjs",
     "capture:mission": "node scripts/capture-mission.mjs"
   },
   "devDependencies": {

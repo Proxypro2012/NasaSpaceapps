@@ -6,7 +6,8 @@ import { EXAMPLE_MISSION, type WindowComparison } from './mission';
 export type Audience = 'planner' | 'educator' | 'public';
 export type Panel = 'none' | 'trust' | 'dive' | 'calendar' | 'submission';
 
-export const WINDOW_OPTIONS = [7, 14, 30] as const;
+/** Window lengths in days. 29.5 is one lunar day (sunrise to sunrise); 365 is one year. */
+export const WINDOW_OPTIONS = [7, 14, 29.5, 30, 365] as const;
 export const AUDIENCES: Audience[] = ['planner', 'educator', 'public'];
 export const DATE_TWEEN_MS = 1200;
 export const MONTH_TOUR_MS = 20_000;

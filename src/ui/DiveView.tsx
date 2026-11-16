@@ -8,7 +8,7 @@ import { TERRAIN_STRETCH, TerrainView } from '../scene/TerrainView';
 import { useStore } from '../state/store';
 import { HorizonChart } from './HorizonChart';
 import { ResolutionNote, VerdictBadge } from './VerdictCard';
-import { fmtDate, fmtTime, pct } from './format';
+import { fmtDate, fmtTime, pct, windowAdjective } from './format';
 import { useEscape } from './hooks';
 
 interface Props {
@@ -117,7 +117,7 @@ export function DiveView({ data, metrics }: Props) {
           </button>
         </div>
         <p className="scrub-note">
-          Drag to move through the {windowDays}-day window in {STEP_MS / 60000}-minute steps. The arrows move the whole window by a day.
+          Drag to move through the {windowAdjective(windowDays)} window in {STEP_MS / 60000}-minute steps. The arrows move the whole window by a day.
         </p>
       </div>
     </div>

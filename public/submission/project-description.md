@@ -38,11 +38,16 @@ These figures are model estimates using a half-disc visibility threshold and
 - NASA NAIF DE440/SPICE kernels supply Sun and Earth positions and lunar orientation.
 - NASA GSFC LOLA terrain supplies the local skyline at three south-pole sites.
   Calculations use the 40 m map, with an 80 m sensitivity comparison.
+- The LROC PSR Atlas (Arizona State University), built on Mazarico et al. (2011)
+  LOLA illumination modelling, supplies the south-pole permanently shadowed regions
+  behind the Nearest PSR readout.
 - NASA's CGI Moon Kit supplies visualization textures; textures drive no metrics.
 - Independent NASA/JPL Horizons direction checks, reference tests and measured
   terrain-resolution differences can be inspected in **How we know**.
 
-The search considers daily UTC starts for up to 365 days. It maximizes simultaneous
+Windows can be 7, 14 or 30 days, one lunar day (29.5 days) or one year. The
+search considers daily UTC starts over the next 365 days, each judged over the
+full window. It maximizes simultaneous
 Sun/Earth visibility, then sunlight, then shorter full darkness, then the earliest
 date. Both terrain maps are searched independently; the app flags when their
 preferred dates differ. It also flags sunlight-verdict disagreements for the
@@ -64,7 +69,9 @@ thermal conditions, relays and flight safety are not assessed. Each site is one
 point. A different location or terrain model can change the result. The 40/80 m
 comparison is a sensitivity check, not ground truth or an error bound. Eclipse
 geometry excludes atmospheric refraction and diffuse light. Good/Risky/Poor
-are our sunlight thresholds, not NASA standards. All times are UTC.
+are our sunlight thresholds, not NASA standards. Nearest PSR is measured to the
+centre of the closest shadowed region of 10 km² or more; nearness indicates
+possible water ice, not confirmed ice. All times are UTC.
 
 ## Public materials
 

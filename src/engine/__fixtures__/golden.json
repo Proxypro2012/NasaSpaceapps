@@ -2531,7 +2531,10 @@
    "earth_link_pct": 46.736111111111114,
    "longest_earth_gap_hours": 322.0,
    "combined_pct": 46.736111111111114,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 13.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "connecting-ridge",
@@ -2542,7 +2545,10 @@
    "earth_link_pct": 55.69444444444444,
    "longest_earth_gap_hours": 319.0,
    "combined_pct": 45.90277777777778,
-   "verdict": "Risky"
+   "verdict": "Risky",
+   "operable_days": 13.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": "2027-06-13T10:30:00.000Z"
   },
   {
    "site": "connecting-ridge",
@@ -2553,7 +2559,10 @@
    "earth_link_pct": 73.66071428571429,
    "longest_earth_gap_hours": 88.5,
    "combined_pct": 73.66071428571429,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 10.0,
+   "total_days": 14.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "connecting-ridge",
@@ -2564,7 +2573,10 @@
    "earth_link_pct": 5.059523809523809,
    "longest_earth_gap_hours": 159.5,
    "combined_pct": 5.059523809523809,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 0.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "connecting-ridge",
@@ -2575,7 +2587,10 @@
    "earth_link_pct": 0.0,
    "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 0.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "connecting-ridge",
@@ -2586,7 +2601,24 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 100.0,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 7.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
+  },
+  {
+   "site": "connecting-ridge",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 29.5,
+   "sunlight_pct": 100.0,
+   "longest_dark_hours": 0.0,
+   "earth_link_pct": 47.45762711864407,
+   "longest_earth_gap_hours": 213.5,
+   "combined_pct": 47.45762711864407,
+   "verdict": "Good",
+   "operable_days": 14.0,
+   "total_days": 29.5,
+   "first_long_dark_utc": null
   },
   {
    "site": "malapert-massif",
@@ -2597,7 +2629,10 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 64.23611111111111,
-   "verdict": "Risky"
+   "verdict": "Risky",
+   "operable_days": 19.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": "2026-11-14T02:00:00.000Z"
   },
   {
    "site": "malapert-massif",
@@ -2608,7 +2643,10 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 40.0,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 11.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": "2027-06-01T00:00:00.000Z"
   },
   {
    "site": "malapert-massif",
@@ -2619,7 +2657,10 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 8.035714285714286,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 1.0,
+   "total_days": 14.0,
+   "first_long_dark_utc": "2029-01-11T10:00:00.000Z"
   },
   {
    "site": "malapert-massif",
@@ -2630,7 +2671,10 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 98.51190476190477,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 7.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "malapert-massif",
@@ -2641,7 +2685,10 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 69.34523809523809,
-   "verdict": "Risky"
+   "verdict": "Risky",
+   "operable_days": 5.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "malapert-massif",
@@ -2652,7 +2699,24 @@
    "earth_link_pct": 100.0,
    "longest_earth_gap_hours": 0.0,
    "combined_pct": 0.0,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 0.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": "2027-01-10T00:00:00.000Z"
+  },
+  {
+   "site": "malapert-massif",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 29.5,
+   "sunlight_pct": 56.21468926553672,
+   "longest_dark_hours": 265.0,
+   "earth_link_pct": 100.0,
+   "longest_earth_gap_hours": 0.0,
+   "combined_pct": 56.21468926553672,
+   "verdict": "Poor",
+   "operable_days": 17.0,
+   "total_days": 29.5,
+   "first_long_dark_utc": "2027-01-06T07:00:00.000Z"
   },
   {
    "site": "nobile-rim-1",
@@ -2663,7 +2727,10 @@
    "earth_link_pct": 40.97222222222222,
    "longest_earth_gap_hours": 353.0,
    "combined_pct": 33.05555555555556,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 9.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": "2026-11-21T12:30:00.000Z"
   },
   {
    "site": "nobile-rim-1",
@@ -2674,7 +2741,10 @@
    "earth_link_pct": 51.94444444444445,
    "longest_earth_gap_hours": 346.0,
    "combined_pct": 2.1527777777777777,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 0.0,
+   "total_days": 30.0,
+   "first_long_dark_utc": "2027-06-01T00:00:00.000Z"
   },
   {
    "site": "nobile-rim-1",
@@ -2685,7 +2755,10 @@
    "earth_link_pct": 66.66666666666666,
    "longest_earth_gap_hours": 112.0,
    "combined_pct": 34.970238095238095,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 5.0,
+   "total_days": 14.0,
+   "first_long_dark_utc": "2029-01-10T00:00:00.000Z"
   },
   {
    "site": "nobile-rim-1",
@@ -2696,7 +2769,10 @@
    "earth_link_pct": 0.0,
    "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
-   "verdict": "Risky"
+   "verdict": "Risky",
+   "operable_days": 0.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
   },
   {
    "site": "nobile-rim-1",
@@ -2707,7 +2783,10 @@
    "earth_link_pct": 0.0,
    "longest_earth_gap_hours": 168.0,
    "combined_pct": 0.0,
-   "verdict": "Poor"
+   "verdict": "Poor",
+   "operable_days": 0.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": "2027-01-01T06:00:00.000Z"
   },
   {
    "site": "nobile-rim-1",
@@ -2718,7 +2797,24 @@
    "earth_link_pct": 94.04761904761905,
    "longest_earth_gap_hours": 10.0,
    "combined_pct": 83.92857142857143,
-   "verdict": "Good"
+   "verdict": "Good",
+   "operable_days": 6.0,
+   "total_days": 7.0,
+   "first_long_dark_utc": null
+  },
+  {
+   "site": "nobile-rim-1",
+   "start_utc": "2027-01-01T00:00:00Z",
+   "days": 29.5,
+   "sunlight_pct": 48.516949152542374,
+   "longest_dark_hours": 233.5,
+   "earth_link_pct": 43.57344632768362,
+   "longest_earth_gap_hours": 226.0,
+   "combined_pct": 30.720338983050848,
+   "verdict": "Poor",
+   "operable_days": 9.0,
+   "total_days": 29.5,
+   "first_long_dark_utc": "2027-01-01T06:00:00.000Z"
   }
  ]
 }

@@ -115,6 +115,32 @@ def summarise(sun_frac: np.ndarray, earth_frac: np.ndarray, step_minutes: float 
     }
 
 
+def window_summary(sun_frac: np.ndarray, earth_frac: np.ndarray, start_et: float, step_minutes: float = STEP_MINUTES) -> dict:
+    """Operable days and the first long dark stretch. Mirrors src/engine/summary.ts.
+
+    A day is a 24-hour block from the window start; it is operable when the Sun and
+    Earth are both visible for at least half of its samples. A shorter final block
+    counts for its own length. The long dark stretch is the first run of fully dark
+    samples lasting at least GOOD_MAX_DARK_HOURS.
+    """
+    per_day = int(round(24 * 60 / step_minutes))
+    both = (sun_frac >= VISIBLE_THRESHOLD) & (earth_frac >= VISIBLE_THRESHOLD)
+    operable_steps = sum(len(block) for block in (both[b:b + per_day] for b in range(0, len(both), per_day)) if block.mean() >= 0.5)
+    need = int(round(GOOD_MAX_DARK_HOURS * 60 / step_minutes))
+    dark = (sun_frac <= DARK_EPSILON).astype(np.int64)
+    first = None
+    if len(dark) >= need:
+        counts = np.concatenate([[0], np.cumsum(dark)])
+        starts = np.flatnonzero(counts[need:] - counts[:-need] == need)
+        if starts.size:
+            first = int(starts[0])
+    return {
+        "operable_days": operable_steps / per_day,
+        "total_days": len(both) / per_day,
+        "first_long_dark_utc": None if first is None else utc_iso(start_et + first * step_minutes * 60.0),
+    }
+
+
 def window_ets(start_utc: str, days: float, step_minutes: float = STEP_MINUTES) -> np.ndarray:
     et0 = sp.str2et(start_utc)
     n = int(round(days * 24 * 60 / step_minutes))

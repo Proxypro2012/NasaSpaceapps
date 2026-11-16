@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { AppData } from '../engine/load';
 import { THRESHOLDS } from '../engine/metrics';
+import { nearestPsr, psrHostLabel } from '../engine/psr';
+import { windowSummary, type WindowSummary } from '../engine/summary';
 import type { Site, Verdict, WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
 import { EvidenceSummary, MissionComparison, MissionPrompt } from './Mission';
 import { VisibilityTimeline } from './VisibilityTimeline';
 import { WindowRange } from './WindowRange';
 import { AllSites } from './AllSites';
-import { VERDICT_GLYPH, duration, fmtDayMonth, isoDay, pct } from './format';
+import { VERDICT_GLYPH, duration, fmtDate, fmtDayMonth, fmtTime, isoDay, km, pct } from './format';
 import { useCountUp } from './hooks';
 import { download, encodeLink, windowCsv } from './share';
 
@@ -26,6 +28,20 @@ function Numeral({ value, format }: { value: number; format(v: number): string }
       {unit && <small> {unit}</small>}
     </span>
   );
+}
+
+/** "Operable 13 of 30 days in this window — first dark stretch of 48 h or longer starts 13 Jun 2027, 10:30 UTC." */
+export function summarySentence(s: WindowSummary): string {
+  const n = (v: number) => String(Number(v.toFixed(1)));
+  // Non-breaking spaces keep "48 h" and the time "13:30 UTC" from splitting across lines.
+  const long = `dark stretch of ${THRESHOLDS.goodMaxDarkHours}\u00a0h or longer`;
+  const ms = s.firstLongDarkStartMs;
+  const tail = ms === null
+    ? `no ${long}`
+    : s.longDarkAtStart
+      ? `a ${long} is under way at the window start`
+      : `first ${long} starts ${fmtDate.format(ms)}, ${fmtTime.format(ms)}\u00a0UTC`;
+  return `Operable ${n(s.operableDays)} of ${n(s.totalDays)} days in this window — ${tail}.`;
 }
 
 export function VerdictBadge({ verdict }: { verdict: WindowMetrics['verdict'] }) {
@@ -67,6 +83,10 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
   const noDark = m.longestDarkHours < 0.25;
+  // Both are new readouts; they add to the window metrics and change none of them.
+  const summary = useMemo(() => windowSummary(data.eph, site, windowStartMs, windowDays), [data.eph, site, windowStartMs, windowDays]);
+  const psr = useMemo(() => nearestPsr(site, data.psrs.psrs, data.sitesFile.reference_radius_km), [site, data.psrs, data.sitesFile]);
+  const psrHost = psr ? psrHostLabel(psr.psr.features) : '';
 
   const share = async () => {
     const targetMs = useStore.getState().targetMs;
@@ -86,6 +106,9 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
         <h1>{site.name}</h1>
         <VerdictBadge verdict={m.verdict} />
       </header>
+      <p className="window-summary" title="A day counts as operable when the Sun and Earth are both in view for at least half of it.">
+        {summarySentence(summary)}
+      </p>
       <WindowRange data={data} />
       <MissionPrompt data={data} metrics={m} />
       <MissionComparison />
@@ -120,6 +143,15 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
               <p>below half in view</p>
             </dd>
           </div>
+          {psr && (
+            <div className="metric-psr" title={`${psr.psr.id}, ${psrHost}: ${Math.round(psr.psr.area_km2)} km² of permanent shadow. Distance is to its centre; the shadow's edge is closer.`}>
+              <dt>Nearest PSR</dt>
+              <dd>
+                <Numeral value={psr.distanceKm} format={km} />
+                <p>water-ice target<span className="sr-only">, the centre of a permanently shadowed region in {psrHost}</span></p>
+              </dd>
+            </div>
+          )}
         </dl>
       )}
 
@@ -135,6 +167,12 @@ export function VerdictCard({ data, metrics, verdicts }: Props) {
             {' '}The longest gap below that threshold is <strong>{duration(m.longestEarthGapHours)}</strong> within this window.
             A working radio link also depends on the antenna and radio system.
           </p>
+          {psr && (
+            <p>
+              The nearest big crater shadow that never sees the Sun, in {psrHost}, is <strong>{km(psr.distanceKm)}</strong> away. Water ice
+              may be trapped there; that is possible, not confirmed.
+            </p>
+          )}
         </div>
       )}
 

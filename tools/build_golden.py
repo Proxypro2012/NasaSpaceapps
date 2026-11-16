@@ -12,10 +12,11 @@ import numpy as np
 import spiceypy as sp
 
 from lunar.common import FIXTURES, PUBLIC_DATA, load_kernels, load_resolved_sites
-from lunar.metrics import load_mask, series, utc_iso, window_metrics
+from lunar.metrics import load_mask, series, summarise, utc_iso, window_ets, window_summary
 
 WINDOWS = [("2026-11-14T00:00:00", 30), ("2027-06-01T00:00:00", 30), ("2029-01-10T00:00:00", 14),
-           ("2026-03-03T00:00:00", 7), ("2027-01-01T00:00:00", 7), ("2027-01-10T00:00:00", 7)]
+           ("2026-03-03T00:00:00", 7), ("2027-01-01T00:00:00", 7), ("2027-01-10T00:00:00", 7),
+           ("2027-01-01T00:00:00", 29.5)]
 
 
 def main() -> None:
@@ -41,7 +42,11 @@ def main() -> None:
                 }
             )
         for start, days in WINDOWS:
-            out["windows"].append({"site": site["id"], "start_utc": start + "Z", "days": days, **window_metrics(site, mask, start, days)})
+            ets = window_ets(start, days)
+            w = series(site, mask, ets)
+            sun, earth = w["sun"]["frac"], w["earth"]["frac"]
+            out["windows"].append({"site": site["id"], "start_utc": start + "Z", "days": days,
+                                   **summarise(sun, earth), **window_summary(sun, earth, ets[0])})
     FIXTURES.mkdir(parents=True, exist_ok=True)
     (FIXTURES / "golden.json").write_text(json.dumps(out, indent=1) + "\n")
     for w in out["windows"]:

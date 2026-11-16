@@ -2,9 +2,10 @@ import { useState } from 'react';
 import type { AppData } from '../engine/load';
 import { DAY_MS, startOfUtcDay } from '../engine/metrics';
 import type { DayCell, Site, WindowMetrics } from '../engine/types';
+import { nearestPsr, psrHostLabel } from '../engine/psr';
 import { useStore } from '../state/store';
 import { BestWindowButton } from './Mission';
-import { duration, fmtDate, fmtDayMonth, pct } from './format';
+import { duration, fmtDate, fmtDayMonth, km, pct, windowAdjective } from './format';
 import { useCalendar, useEscape } from './hooks';
 
 interface Props {
@@ -42,6 +43,8 @@ export function Calendar({ sites, cells, selectedSite, momentMs, metric = 'combi
   const days = cells[sites[0].id];
   const momentDay = startOfUtcDay(momentMs);
   const sparse = days.length > 14;
+  // A year of squares cannot shrink to fit; it scrolls sideways at a fixed size instead.
+  const long = days.length > 31;
 
   return (
     <section className="calendar" aria-label="Calendar of usable days">
@@ -65,13 +68,14 @@ export function Calendar({ sites, cells, selectedSite, momentMs, metric = 'combi
           <span>100%</span>
         </div>
       </header>
-      <div className="calendar-grid" style={{ gridTemplateColumns: `minmax(118px, auto) repeat(${days.length}, minmax(0, 1fr))` }}>
+      <div className="calendar-scroll" data-long={long} role={long ? 'region' : undefined} aria-label={long ? 'Days of the window; scroll sideways' : undefined} tabIndex={long ? 0 : undefined}>
+      <div className="calendar-grid" style={{ gridTemplateColumns: `minmax(118px, auto) repeat(${days.length}, ${long ? '14px' : 'minmax(0, 1fr)'})` }}>
         <span />
         {days.map((d, i) => {
           const date = new Date(d.dayMs);
           const first = i === 0 || date.getUTCDate() === 1;
           const sinceFirst = date.getUTCDate() === 1 || i === 0 ? 0 : Math.min(i, date.getUTCDate() - 1);
-          const show = first || (sinceFirst >= 3 && (!sparse || date.getUTCDate() % 5 === 0));
+          const show = first || (!long && sinceFirst >= 3 && (!sparse || date.getUTCDate() % 5 === 0));
           return (
             <span key={d.dayMs} className="calendar-day" data-first={first}>
               {show ? (first ? fmtDayMonth.format(d.dayMs) : date.getUTCDate()) : ''}
@@ -98,6 +102,7 @@ export function Calendar({ sites, cells, selectedSite, momentMs, metric = 'combi
             ))}
           </div>
         ))}
+      </div>
       </div>
     </section>
   );
@@ -130,10 +135,10 @@ export function CalendarSheet({ data, metrics }: { data: AppData; metrics: Recor
           </button>
         </header>
         <div className="sheet-body">
-          <p className="comparison-window"><strong>{windowDays}-day assessment window</strong> · {fmtDate.format(windowStartMs)} → {fmtDate.format(windowStartMs + windowDays * DAY_MS)} UTC</p>
+          <p className="comparison-window"><strong>{windowAdjective(windowDays)} assessment window</strong> · {fmtDate.format(windowStartMs)} → {fmtDate.format(windowStartMs + windowDays * DAY_MS)} UTC</p>
           <div className="site-comparison-scroll" role="region" aria-label="Side-by-side site metrics; scroll horizontally on small screens" tabIndex={0}>
             <table className="site-comparison-table">
-              <caption className="sr-only">All sites assessed for the same {windowDays}-day window</caption>
+              <caption className="sr-only">All sites assessed for the same {windowAdjective(windowDays)} window</caption>
               <thead><tr><td /><>{data.sites.map(site => <th scope="col" key={site.id} data-selected={site.id === siteId}>
                 <button type="button" className="link" aria-pressed={site.id === siteId} onClick={() => { useStore.getState().setSite(site.id, true); close(); }}>{site.name}</button>
               </th>)}</></tr></thead>
@@ -144,10 +149,14 @@ export function CalendarSheet({ data, metrics }: { data: AppData; metrics: Recor
                 ['Earth in view', (m: WindowMetrics) => pct(m.earthLinkPct)],
                 ['Longest Earth gap', (m: WindowMetrics) => duration(m.longestEarthGapHours)],
                 ['Both together', (m: WindowMetrics) => pct(m.combinedPct)],
-              ] as const).map(([label, format]) => <tr key={label}><th scope="row">{label}</th>{data.sites.map(site => <td key={site.id} data-site={site.id} data-selected={site.id === siteId}>{format(metrics[site.id])}</td>)}</tr>)}</tbody>
+              ] as const).map(([label, format]) => <tr key={label}><th scope="row">{label}</th>{data.sites.map(site => <td key={site.id} data-site={site.id} data-selected={site.id === siteId}>{format(metrics[site.id])}</td>)}</tr>)}
+              <tr><th scope="row">Nearest PSR</th>{data.sites.map(site => {
+                const n = nearestPsr(site, data.psrs.psrs, data.sitesFile.reference_radius_km);
+                return <td key={site.id} data-site={site.id} data-selected={site.id === siteId}>{n ? <>{km(n.distanceKm)}<span className="psr-host">{psrHostLabel(n.psr.features)}</span></> : '—'}</td>;
+              })}</tr></tbody>
             </table>
           </div>
-          <p className="comparison-definitions">Verdicts describe sunlight. Earth gaps are consecutive samples with less than half of Earth above terrain, clipped to this window; they do not predict radio service. Durations use 30-minute samples. Select a site heading to inspect it.</p>
+          <p className="comparison-definitions">Verdicts describe sunlight. Earth gaps are consecutive samples with less than half of Earth above terrain, clipped to this window; they do not predict radio service. Durations use 30-minute samples. Nearest PSR is the distance to the centre of the closest permanently shadowed region of 10 km² or more (LROC PSR Atlas), a possible water-ice target. Select a site heading to inspect it.</p>
           <div className="segmented calendar-layers" role="radiogroup" aria-label="Daily visibility layer">
             {(['sunlightPct', 'earthLinkPct', 'combinedPct'] as const).map(key => <button type="button" role="radio" key={key} aria-checked={metric === key} onClick={() => setMetric(key)}>{key === 'sunlightPct' ? 'Sunlight' : key === 'earthLinkPct' ? 'Earth' : 'Both'}</button>)}
           </div>

@@ -32,7 +32,7 @@ The prepared data is already in `public/data` and `public/textures`, so the step
 | `src/scene` | The Moon, Earth and Sun scene, and the 3D terrain close-up (three.js) |
 | `src/ui` | Verdict card, skyline chart, calendar, trust panel, site view |
 | `tools` | Data preparation and validation scripts |
-| `public/data` | Sun/Earth position table, horizon masks, terrain tiles, validation results |
+| `public/data` | Sun/Earth position table, horizon masks, terrain tiles, validation results, south-pole PSR locations |
 
 The verdict thresholds (Good, Risky, Poor) are this project's own definitions, not NASA standards. They are listed in the app under "How we know", together with every assumption, the validation results, and the limits.
 
@@ -64,6 +64,7 @@ uv run python build_textures.py         # Moon picture maps and site terrain til
 uv run python validate_horizons_api.py  # compare directions with NASA/JPL Horizons
 uv run python build_validation.py       # the checks shown in the app
 uv run python build_golden.py           # reference values for npm test
+uv run python fetch_psrs.py             # south-pole PSR locations from the LROC PSR Atlas
 ```
 
 Sites are defined in `tools/sites.json`.
@@ -76,6 +77,7 @@ Sites are defined in `tools/sites.json`.
 - NASA GSFC Planetary Geodesy Data Archive: LOLA south pole elevation maps (`LDEM_80S_80MPP_ADJ.TIF`, `LDEM_80S_40MPP_ADJ.TIF`), and the high-resolution site maps (product 78) whose centres locate the three sites. Barker, M. K., et al. (2021), "Improved LOLA elevation maps for south pole landing sites", *Planetary and Space Science* 203, 105119.
 - NASA Scientific Visualization Studio, CGI Moon Kit (https://svs.gsfc.nasa.gov/4720): colour and elevation maps, used for the picture of the Moon only.
 - NASA/JPL Horizons (https://ssd.jpl.nasa.gov/horizons/), used as an independent check.
+- LROC PSR Atlas, Arizona State University (https://lroc.im-ldi.com/atlases/psr/list): centroids and areas of south-pole permanently shadowed regions of 10 km² or more, from the LOLA illumination modelling of Mazarico, E., et al. (2011), Icarus 211, 1066-1081. Used for the Nearest PSR readout only.
 - Bryant, S., "Lunar Pole Illumination and Communications Statistics Computed from GSSR Elevation Data", JPL (NASA NTRS 20150008843), used as a published benchmark.
 
 **Software**: SPICE toolkit via SpiceyPy, NumPy, Rasterio, Pillow (data preparation); three.js, React, Zustand, Vite, TypeScript, Vitest (the app).
@@ -110,6 +112,14 @@ NASA's CGI Moon Kit. Screenshots and the walkthrough capture the running app.
   hazards and landing safety are not assessed. Eclipse geometry excludes
   atmospheric refraction and diffuse light.
 - Good/Risky/Poor are our sunlight thresholds, not NASA standards or approval.
+  The verdict uses the single longest dark stretch, so over a one-year window
+  almost every site reads Poor.
+- Nearest PSR is the distance to the centre of the closest permanently shadowed
+  region of 10 km² or more in the LROC PSR Atlas. The shadow's edge, and smaller
+  shadowed pockets, are closer. Being near a PSR indicates possible water ice,
+  not confirmed ice.
+- An operable day is our own definition: a 24-hour block with the Sun and Earth
+  both in view for at least half of it.
 
 ## Inspiration
 

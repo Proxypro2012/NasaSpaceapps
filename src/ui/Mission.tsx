@@ -3,7 +3,7 @@ import { DAY_MS } from '../engine/metrics';
 import type { WindowMetrics } from '../engine/types';
 import { useStore } from '../state/store';
 import { findBetterWindow, launchMission } from './actions';
-import { duration, fmtDate, pct } from './format';
+import { duration, fmtDate, pct, windowAdjective } from './format';
 
 export function BestWindowButton({ data }: { data: AppData }) {
   const searching = useStore(s => s.searching);
@@ -67,9 +67,9 @@ export function MissionComparison() {
     <section className="mission-comparison" aria-labelledby="comparison-title">
       <p className="eyebrow">Same place. A different date.</p>
       <h2 id="comparison-title">{improvement ? `${Number(extraHours.toFixed(1))} more hours together` : shift ? 'A stronger window' : 'Already a best window'}</h2>
-      <p className="comparison-state" role="status">{moving ? 'Travelling to the recommendation… Destination results are shown below.' : `Comparing two ${original.days}-day windows, using the same site and model.`}</p>
+      <p className="comparison-state" role="status">{moving ? 'Travelling to the recommendation… Destination results are shown below.' : `Comparing two ${windowAdjective(original.days)} windows, using the same site and model.`}</p>
       <table className="comparison-table">
-        <caption className="sr-only">Original and recommended {original.days}-day windows</caption>
+        <caption className="sr-only">Original and recommended {windowAdjective(original.days)} windows</caption>
         <thead><tr><td /><th scope="col">Original<br /><span>{fmtDate.format(original.startMs)}</span></th><th scope="col">Recommended<br /><span>{fmtDate.format(recommended.startMs)}</span></th></tr></thead>
         <tbody>{rows.map(([label, a, b]) => <tr key={label}><th scope="row">{label}</th><td>{a}</td><td>{b}</td></tr>)}</tbody>
       </table>
@@ -78,7 +78,10 @@ export function MissionComparison() {
         {improvement ? `raises time with sunlight and Earth together from ${pct(before.combinedPct)} to ${pct(after.combinedPct)}.` : 'maximizes the sampled time with both in view in this search.'}
         {' '}{Math.abs(after.sunlightPct - before.sunlightPct) < 0.01
           ? (improvement ? 'Sunlight stays the same; Earth visibility makes the difference.' : 'Sunlight stays the same. Ties prefer shorter darkness, then the earliest start.')
-          : `Sunlight changes from ${pct(before.sunlightPct)} to ${pct(after.sunlightPct)}.`}
+          : pct(after.sunlightPct) === pct(before.sunlightPct)
+            // Different underneath but equal once rounded: "from 86% to 86%" would read as a mistake.
+            ? `Sunlight is about the same, ${pct(after.sunlightPct)}.`
+            : `Sunlight changes from ${pct(before.sunlightPct)} to ${pct(after.sunlightPct)}.`}
       </p>
       {comparisonMapStartMs !== undefined && comparisonMapStartMs !== recommended.startMs && <p className="terrain-warning">The best date depends on terrain detail: the 80 m comparison favors {fmtDate.format(comparisonMapStartMs)}. This recommendation uses the 40 m map.</p>}
       <details className="search-method"><summary>How this date was chosen</summary><p>Daily UTC starts from {fmtDate.format(original.startMs)} to {fmtDate.format(comparison.searchEndMs)}. Maximize both-in-view time, then sunlight, then shorter darkness; exact ties use the earliest date. This is a sampled visibility optimum, not a flight recommendation.</p></details>

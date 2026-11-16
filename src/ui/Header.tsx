@@ -5,6 +5,7 @@ import { BestWindowButton } from './Mission';
 import { launchMission } from './actions';
 import { SceneClock } from './SceneClock';
 import { MonthTourControl } from './MonthTour';
+import { windowLabel } from './format';
 import { useEscape } from './hooks';
 
 const AUDIENCE_LABEL = { planner: 'Planner', educator: 'Educator', public: 'Public' } as const;
@@ -64,10 +65,10 @@ export function Header({ data }: { data: AppData }) {
             <div className="menu" role="group" aria-label="More options">
               <div className="menu-row">
                 <span className="menu-label">Window</span>
-                <div className="segmented" role="radiogroup" aria-label="Window length">
+                <div className="segmented window-presets" role="radiogroup" aria-label="Window length">
                   {WINDOW_OPTIONS.map((d) => (
                     <button key={d} type="button" role="radio" aria-checked={d === windowDays} onClick={() => setWindowDays(d)}>
-                      {d} days
+                      {windowLabel(d)}
                     </button>
                   ))}
                 </div>

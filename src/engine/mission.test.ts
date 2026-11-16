@@ -23,7 +23,7 @@ const sitesFile = json('sites.json');
 const data: AppData = {
   eph: new Ephemeris(json('ephemeris.json'), floats('ephemeris.bin')), sitesFile,
   sites: sitesFile.sites.map((s: AppData['sitesFile']['sites'][number]) => makeSite(s, floats(s.horizon_file), sitesFile, floats(s.comparison_horizon_file))),
-  textures: json('textures.json'), validation: json('validation.json'),
+  textures: json('textures.json'), validation: json('validation.json'), psrs: json('psrs.json'),
 };
 const site = data.sites.find(s => s.id === EXAMPLE_MISSION.siteId)!;
 const launch = () => { useStore.getState().init(data, {}); useStore.getState().startMission(); };

@@ -25,6 +25,7 @@ const data: AppData = {
   sites: sitesFile.sites.map((s: AppData['sitesFile']['sites'][number]) => makeSite(s, floats(s.horizon_file), sitesFile, floats(s.comparison_horizon_file))),
   textures: json('textures.json'),
   validation: json('validation.json'),
+  psrs: json('psrs.json'),
 };
 
 describe('audit regressions', () => {

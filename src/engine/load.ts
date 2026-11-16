@@ -1,4 +1,5 @@
 import { Ephemeris } from './ephemeris';
+import type { PsrFile } from './psr';
 import { makeSite } from './site';
 import type { EphemerisMeta, Site, SitesFile } from './types';
 
@@ -74,6 +75,8 @@ export interface AppData {
   sites: Site[];
   textures: TexturesFile;
   validation: ValidationFile;
+  /** South-pole permanently shadowed regions, LROC PSR Atlas. */
+  psrs: PsrFile;
 }
 
 const base = `${import.meta.env.BASE_URL}data/`;
@@ -91,12 +94,13 @@ async function floats(name: string): Promise<Float32Array> {
 }
 
 export async function loadAppData(): Promise<AppData> {
-  const [meta, table, sitesFile, textures, validation] = await Promise.all([
+  const [meta, table, sitesFile, textures, validation, psrs] = await Promise.all([
     json<EphemerisMeta>('ephemeris.json'),
     floats('ephemeris.bin'),
     json<SitesFile>('sites.json'),
     json<TexturesFile>('textures.json'),
     json<ValidationFile>('validation.json'),
+    json<PsrFile>('psrs.json'),
   ]);
   const [masks, comparisonMasks] = await Promise.all([
     Promise.all(sitesFile.sites.map((s) => floats(s.horizon_file))),
@@ -108,6 +112,7 @@ export async function loadAppData(): Promise<AppData> {
     sites: sitesFile.sites.map((s, i) => makeSite(s, masks[i], sitesFile, comparisonMasks[i])),
     textures,
     validation,
+    psrs,
   };
 }
 

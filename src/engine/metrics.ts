@@ -18,7 +18,8 @@ export function windowDateLimits(eph: Ephemeris, days: number): { first: number;
 
 /** A body counts as visible when at least this share of its disc clears the terrain. */
 export const VISIBLE_THRESHOLD = 0.5;
-const DARK_EPSILON = 1e-6;
+/** At or below this visible share the Sun counts as fully hidden (a dark sample). */
+export const DARK_EPSILON = 1e-6;
 
 /**
  * Verdict thresholds. These are this project's own definitions, not NASA
@@ -121,6 +122,11 @@ export interface BestWindow {
  * Finds the window start, on a UTC day boundary within the search span, with the
  * highest combined Sun-and-Earth share. Ties go to more sunlight, then to the
  * shorter dark stretch, then to the earlier date.
+ *
+ * Candidate windows overlap, so each 30-minute sample is computed once and every
+ * candidate is scored from running totals. The scores are the same quantities, at
+ * the same instants, that windowMetrics computes; only the repetition is removed,
+ * which keeps a one-year search fast enough to run on a click.
  */
 export function bestWindow(
   eph: Ephemeris,
@@ -129,27 +135,73 @@ export function bestWindow(
   searchDays: number,
   windowDays: number,
 ): BestWindow | null {
-  let best: BestWindow | null = null;
   const { first, last } = windowDateLimits(eph, windowDays);
-  // The secondary map is an uncertainty check, not the search objective.
-  const primary = site.comparison ? { ...site, comparison: undefined } : site;
+  // Start dates that fit the data form one unbroken run of days.
+  let d0 = -1;
+  let d1 = -1;
   for (let d = 0; d < searchDays; d++) {
     const startMs = searchStartDayMs + d * DAY_MS;
     if (startMs < first || startMs > last) continue;
-    const m = windowMetrics(eph, primary, startMs, windowDays);
-    if (
-      !best ||
-      m.combinedPct > best.metrics.combinedPct + 1e-9 ||
-      (Math.abs(m.combinedPct - best.metrics.combinedPct) <= 1e-9 &&
-        (m.sunlightPct > best.metrics.sunlightPct + 1e-9 ||
-          (Math.abs(m.sunlightPct - best.metrics.sunlightPct) <= 1e-9 &&
-            m.longestDarkHours < best.metrics.longestDarkHours)))
-    ) {
-      best = { startMs, metrics: m };
+    if (d0 < 0) d0 = d;
+    d1 = d;
+  }
+  if (d0 < 0) return null;
+
+  // The secondary map is an uncertainty check, not the search objective.
+  const primary = site.comparison ? { ...site, comparison: undefined } : site;
+  const steps = Math.round(windowDays * STEPS_PER_DAY);
+  const baseMs = searchStartDayMs + d0 * DAY_MS;
+  const n = (d1 - d0) * STEPS_PER_DAY + steps;
+  const sunBefore = new Int32Array(n + 1);
+  const bothBefore = new Int32Array(n + 1);
+  const runStart: number[] = [];
+  const runEnd: number[] = [];
+  for (let j = 0; j < n; j++) {
+    skyAt(eph, primary, baseMs + j * STEP_MS, scratch);
+    const s = scratch.sun.frac >= VISIBLE_THRESHOLD;
+    const e = scratch.earth.frac >= VISIBLE_THRESHOLD;
+    sunBefore[j + 1] = sunBefore[j] + (s ? 1 : 0);
+    bothBefore[j + 1] = bothBefore[j] + (s && e ? 1 : 0);
+    if (scratch.sun.frac <= DARK_EPSILON) {
+      if (runEnd.length && runEnd[runEnd.length - 1] === j) runEnd[runEnd.length - 1] = j + 1;
+      else {
+        runStart.push(j);
+        runEnd.push(j + 1);
+      }
     }
   }
-  if (best && site.comparison) best.metrics = windowMetrics(eph, site, best.startMs, windowDays);
-  return best;
+
+  let bestStart = -1;
+  let best = { combinedPct: 0, sunlightPct: 0, longestDarkHours: 0 };
+  let r = 0;
+  for (let d = d0; d <= d1; d++) {
+    const a = (d - d0) * STEPS_PER_DAY;
+    const b = a + steps;
+    while (r < runStart.length && runEnd[r] <= a) r++;
+    let longest = 0;
+    // A dark run that crosses either edge of the window counts only its part inside.
+    for (let k = r; k < runStart.length && runStart[k] < b; k++) {
+      const len = Math.min(runEnd[k], b) - Math.max(runStart[k], a);
+      if (len > longest) longest = len;
+    }
+    const m = {
+      combinedPct: (100 * (bothBefore[b] - bothBefore[a])) / steps,
+      sunlightPct: (100 * (sunBefore[b] - sunBefore[a])) / steps,
+      longestDarkHours: (longest * STEP_MINUTES) / 60,
+    };
+    if (
+      bestStart < 0 ||
+      m.combinedPct > best.combinedPct + 1e-9 ||
+      (Math.abs(m.combinedPct - best.combinedPct) <= 1e-9 &&
+        (m.sunlightPct > best.sunlightPct + 1e-9 ||
+          (Math.abs(m.sunlightPct - best.sunlightPct) <= 1e-9 && m.longestDarkHours < best.longestDarkHours)))
+    ) {
+      bestStart = searchStartDayMs + d * DAY_MS;
+      best = m;
+    }
+  }
+  // Full metrics for the winner, including the secondary-map check when there is one.
+  return { startMs: bestStart, metrics: windowMetrics(eph, site, bestStart, windowDays) };
 }
 
 /** Midnight UTC at or before an instant. */

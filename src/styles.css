@@ -442,7 +442,8 @@ button {
 .scene-clock-label { font-size: 12px; color: var(--sea-glass); }
 .scene-clock-time { font-size: 13px; font-weight: 500; margin-left: 4px; }
 .round:disabled { cursor: default; opacity: 0.45; }
-.assessment-window { display: flex; flex-direction: column; gap: 4px; padding-block: 8px; border-block: 1px solid var(--line); }
+.assessment-window { display: flex; flex-direction: column; gap: 4px; padding-block: 6px; border-block: 1px solid var(--line); }
+.window-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .window-range { font-size: 13px; font-variant-numeric: tabular-nums; }
 .window-start-control { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; }
 .window-start-control input { min-height: 36px; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; color: var(--cream); background: var(--navy); font: inherit; }
@@ -479,6 +480,13 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+/* Five window presets wrap onto two rows rather than widen the menu off screen. */
+.segmented.window-presets {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  width: 262px;
+  border-radius: 18px;
 }
 .menu-label {
   font-size: 13px;
@@ -517,11 +525,11 @@ button {
   width: var(--card-w);
   max-height: calc(100% - 84px - var(--gutter));
   border-radius: 20px;
-  padding: 12px 20px;
+  padding: 10px 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   background: var(--panel);
   border: 1px solid var(--line);
   -webkit-backdrop-filter: blur(14px);
@@ -537,6 +545,12 @@ button {
 .card-head h1 {
   font: 400 30px/1.05 var(--serif);
   letter-spacing: -0.02em;
+}
+.window-summary {
+  margin-top: -6px;
+  font-size: 13px;
+  line-height: 1.3;
+  opacity: 0.86;
 }
 .all-sites { display: flex; flex-direction: column; gap: 4px; }
 .all-sites-heading, .site-row { display: grid; grid-template-columns: 8px minmax(0, 1fr) 36px 48px 52px; align-items: center; gap: 8px; padding-inline: 8px; }
@@ -596,23 +610,23 @@ button {
 
 .metrics {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px 8px;
   margin: 0;
-  padding: 8px 0;
+  padding: 6px 0;
   border-block: 1px solid var(--line);
 }
 .metrics dt {
-  min-height: 2.9em;
+  min-height: 0;
   font-size: 12.5px;
   font-weight: 500;
   opacity: 0.72;
 }
 .metrics dd {
-  margin: 4px 0 3px;
+  margin: 3px 0 2px;
 }
 .numeral {
-  font: 600 32px/1 var(--sans);
+  font: 600 28px/1 var(--sans);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
   white-space: nowrap;
@@ -631,9 +645,10 @@ button {
 .plain {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  font-size: 15.5px;
-  padding: 14px 0;
+  gap: 8px;
+  font-size: 14.5px;
+  line-height: 1.4;
+  padding: 10px 0;
   border-block: 1px solid var(--line);
 }
 .plain .headline {
@@ -805,6 +820,7 @@ button {
 .site-comparison-table thead th { width: 24%; }
 .site-comparison-table thead .link { font-size: 14px; }
 .site-comparison-table [data-selected='true'] { background: rgb(124 200 184 / 0.12); }
+.psr-host { display: block; font-size: 11.5px; opacity: 0.7; }
 .comparison-definitions { font-size: 12px; line-height: 1.5; opacity: 0.85; }
 .calendar-layers { align-self: flex-start; margin-bottom: 12px; }
 
@@ -836,6 +852,24 @@ button {
   display: grid;
   gap: 2px;
   align-items: center;
+}
+.calendar-scroll[data-long='true'] {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.calendar-scroll[data-long='true'] .calendar-grid {
+  width: max-content;
+  min-width: 0;
+}
+/* Site names stay in view while a year of days scrolls past. */
+.calendar-scroll[data-long='true'] .calendar-site {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  background: var(--sheet);
 }
 .calendar-row {
   display: contents;
@@ -1334,7 +1368,6 @@ table.data th {
 
 @media (max-width: 520px) {
   .metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .metrics dt { min-height: 0; }

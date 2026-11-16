@@ -1,6 +1,7 @@
 import type { AppData } from '../engine/load';
 import { bestWindow, DAY_MS, windowDateLimits, windowMetrics } from '../engine/metrics';
 import { prefersReducedMotion, useStore } from '../state/store';
+import { fmtDate, windowLabel } from './format';
 import { jumpDuration } from '../state/motion';
 
 const SEARCH_DAYS = 365;
@@ -27,7 +28,12 @@ export function jumpToBest(data: AppData): void {
     ? comparison.original
     : { siteId, startMs: windowStartMs, days: windowDays, metrics: windowMetrics(data.eph, site, windowStartMs, windowDays) };
   const best = bestWindow(data.eph, site, original.startMs, SEARCH_DAYS, windowDays);
-  if (!best) return;
+  if (!best) {
+    // Near the end of the data a long window cannot start any later; say so instead of doing nothing.
+    const { last } = windowDateLimits(data.eph, windowDays);
+    setNotice(`A full ${windowLabel(windowDays)} window must start by ${fmtDate.format(last)}, the last date the data covers for this length. Pick an earlier start.`);
+    return;
+  }
   // Compare the recommendation itself, not just its sunlight verdict, across maps.
   const coarse = site.comparison ? bestWindow(data.eph, site.comparison, original.startMs, SEARCH_DAYS, windowDays) : null;
   dismissBriefing();

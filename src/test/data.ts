@@ -14,5 +14,5 @@ const sitesFile: AppData['sitesFile'] = json('sites.json');
 export const testData: AppData = {
   eph: new Ephemeris(json('ephemeris.json'), floats('ephemeris.bin')), sitesFile,
   sites: sitesFile.sites.map(s => makeSite(s, floats(s.horizon_file), sitesFile, floats(s.comparison_horizon_file))),
-  textures: json('textures.json'), validation: json('validation.json'),
+  textures: json('textures.json'), validation: json('validation.json'), psrs: json('psrs.json'),
 };
